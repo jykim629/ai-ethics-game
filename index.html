@@ -314,7 +314,7 @@
         <li>AI가 작성한 텍스트 안에 가짜 사실이 숨어있습니다</li>
         <li>노란색으로 밑줄 그어진 부분을 클릭해서 가짜를 찾으세요</li>
         <li>각 텍스트마다 1~3개의 할루시네이션이 있습니다</li>
-        <li>총 3개 텍스트, 최대 20점</li>
+        <li>총 4개 텍스트, 각 5점 = 최대 20점</li>
       </ul>
     </div>
     <div class="btn-group">
@@ -328,7 +328,7 @@
   <div class="game-header" style="max-width:800px;">
     <span class="score-display">🏆 <span id="m2-score">0</span>점</span>
     <div class="progress-bar"><div class="progress-fill" id="m2-progress" style="width:0%"></div></div>
-    <span class="module-label">🔍 미션 2 | <span id="m2-q-num">1</span>/3</span>
+    <span class="module-label">🔍 미션 2 | <span id="m2-q-num">1</span>/4</span>
   </div>
   <div class="scenario-wrap" id="m2-content"></div>
 </div>
@@ -631,6 +631,17 @@ const m2Data = [
       "3": { real:false, text:"❌ 할루시네이션! 한국의 AI 기본법은 2024년에 통과되었지, '2023년 세계 최초'가 아닙니다. EU AI Act도 비슷한 시기에 진행되었습니다. AI는 '세계 최초'와 같은 과장된 표현을 자주 사용합니다." },
       "4": { real:true, text:"맞습니다. 카카오(카카오톡)와 네이버는 한국 인터넷 시장의 양대 플랫폼입니다." }
     }
+  },
+  {
+    title: "AI가 생성한 '딥러닝과 인공신경망' 개요",
+    text: `딥러닝은 인간의 뇌 신경망 구조에서 영감을 받은 머신러닝의 한 분야입니다. <span class="highlight" data-id="1">딥러닝의 핵심 알고리즘인 역전파(Backpropagation)는 1986년 루멜하트(Rumelhart) 등이 발표한 논문에서 대중화되었습니다.</span> 이미지 인식 분야의 혁신을 이끈 <span class="highlight" data-id="2">AlexNet은 2012년 ImageNet 대회에서 오류율을 획기적으로 낮추며 딥러닝 붐을 촉발했습니다.</span> 현재 가장 널리 사용되는 대형 언어 모델(LLM)의 기반인 트랜스포머(Transformer) 구조는 <span class="highlight" data-id="3">2019년 Meta AI 연구팀이 "Transformers are All You Need"라는 논문으로 처음 발표했습니다.</span> 딥러닝은 <span class="highlight" data-id="4">의료 영상 진단, 자율주행, 자연어 처리 등 다양한 분야에 활용되고 있습니다.</span>`,
+    fakes: ["3"],
+    explanations: {
+      "1": { real:true, text:"맞습니다. 역전파 알고리즘은 1986년 Rumelhart, Hinton, Williams의 논문 'Learning representations by back-propagating errors'에서 대중화되었습니다." },
+      "2": { real:true, text:"맞습니다. AlexNet은 2012년 ILSVRC(ImageNet) 대회에서 Top-5 오류율 15.3%를 기록하며 딥러닝 시대를 열었습니다." },
+      "3": { real:false, text:"❌ 할루시네이션! 트랜스포머는 2017년 Google Brain 팀이 'Attention is All You Need' 논문으로 발표했습니다. Meta AI가 아니고, 제목도 다르며, 연도도 2019년이 아닌 2017년입니다. AI는 여러 사실을 뒤섞어 그럴듯한 거짓을 만들어냅니다." },
+      "4": { real:true, text:"맞습니다. 딥러닝은 의료 영상, 자율주행, NLP 등 다양한 분야에서 활발히 사용되고 있습니다." }
+    }
   }
 ];
 
@@ -648,13 +659,13 @@ function initM2() {
 function renderM2() {
   const d = m2Data[m2Current];
   document.getElementById('m2-q-num').textContent = m2Current+1;
-  document.getElementById('m2-progress').style.width = ((m2Current/3)*100)+'%';
+  document.getElementById('m2-progress').style.width = ((m2Current/4)*100)+'%';
   document.getElementById('m2-score').textContent = state.scores[1];
   m2Clicked = []; m2Found = [];
 
   document.getElementById('m2-content').innerHTML = `
     <div class="scenario-card">
-      <div class="q-num">텍스트 ${m2Current+1} / 3 — 할루시네이션 탐지</div>
+      <div class="q-num">텍스트 ${m2Current+1} / 4 — 할루시네이션 탐지</div>
       <h3>📄 ${d.title}</h3>
       <p style="margin-top:8px; color:var(--accent); font-size:0.85rem;">💡 노란 밑줄 부분 중 가짜 정보를 클릭하세요! 가짜 항목 수: ${d.fakes.length}개</p>
       <div class="clue-counter">
@@ -668,7 +679,7 @@ function renderM2() {
       <button class="btn btn-warn" onclick="revealM2()">🔍 답 확인하기</button>
     </div>
     <div class="btn-group" id="m2-next-btn" style="display:none;">
-      <button class="btn btn-primary" onclick="nextM2()">${m2Current<2?'다음 텍스트 →':'결과 보기 🏁'}</button>
+      <button class="btn btn-primary" onclick="nextM2()">${m2Current<3?'다음 텍스트 →':'결과 보기 🏁'}</button>
     </div>`;
 
   document.querySelectorAll('.highlight').forEach(el => {
@@ -690,7 +701,7 @@ function handleHighlightClick(el) {
     const dotIdx = m2Found.length - 1;
     const dot = document.getElementById('dot-'+dotIdx);
     if (dot) dot.classList.add('found');
-    state.scores[1] += [7, 7, 6][m2Current];
+    state.scores[1] += 5;
     document.getElementById('m2-score').textContent = state.scores[1];
     fbEl.className = 'feedback-box show correct-fb';
     fbEl.innerHTML = `<h4>✅ 할루시네이션 발견!</h4><p>${info.text}</p>`;
@@ -720,7 +731,7 @@ function revealM2() {
 
 function nextM2() {
   m2Current++;
-  if (m2Current >= 3) {
+  if (m2Current >= 4) {
     state.completed[1] = true;
     updateHomeCards();
     showMissionComplete(2, state.scores[1], 20, 'm2-content');
