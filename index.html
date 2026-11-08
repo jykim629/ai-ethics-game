@@ -65,7 +65,13 @@
   .module-card .badge { position:absolute; top:16px; right:16px; background:var(--accent); color:#fff; border-radius:20px; padding:3px 10px; font-size:0.75rem; font-weight:700; }
   .module-card.locked { opacity:0.5; cursor:not-allowed; }
   .module-card.locked:hover { transform:none; border-color:var(--border); box-shadow:none; }
-  .module-card.completed .badge { background:var(--accent3); }
+  .module-card.completed .badge { background:var(--accent3); color:#1a1a1a; }
+  .mission-done-card { background:var(--card); border:2px solid var(--accent3); border-radius:24px; padding:40px 32px; text-align:center; animation:slideIn 0.4s ease; }
+  .mission-done-card .trophy { font-size:4rem; display:block; margin-bottom:12px; animation:float 3s ease-in-out infinite; }
+  .mission-done-card h3 { font-size:1.6rem; font-weight:800; margin-bottom:6px; }
+  .mission-done-card .score-line { font-size:2.4rem; font-weight:900; color:var(--accent3); margin:12px 0; }
+  .star-row { font-size:1.6rem; margin:4px 0 16px; letter-spacing:4px; }
+  .card-score { font-size:0.8rem; font-weight:700; color:var(--accent3); }
 
   /* ===== INTRO SCREENS ===== */
   .intro-box { max-width:720px; width:100%; background:var(--card); border-radius:24px; padding:40px; border:1px solid var(--border); text-align:center; }
@@ -219,35 +225,40 @@
   </div>
 
   <div class="module-grid">
-    <div class="module-card" onclick="startModule(1)">
+    <div class="module-card" onclick="startModule(1)" id="card-1">
       <span class="icon">🚗</span>
-      <span class="badge">Mission 1</span>
+      <span class="badge" id="badge-1">Mission 1</span>
       <h3>자율주행차 딜레마</h3>
       <p>브레이크가 고장났습니다. AI는 어떤 선택을 해야 할까요? 트롤리 문제를 직접 체험하세요.</p>
+      <div class="card-score" id="card-score-1" style="display:none; margin-top:10px;"></div>
     </div>
-    <div class="module-card" onclick="startModule(2)">
+    <div class="module-card" onclick="startModule(2)" id="card-2">
       <span class="icon">🔍</span>
-      <span class="badge">Mission 2</span>
+      <span class="badge" id="badge-2">Mission 2</span>
       <h3>AI 할루시네이션 탐지</h3>
       <p>AI가 만들어낸 가짜 정보를 찾아라! 거짓말하는 AI를 잡아내는 탐정이 되어보세요.</p>
+      <div class="card-score" id="card-score-2" style="display:none; margin-top:10px;"></div>
     </div>
-    <div class="module-card" onclick="startModule(3)">
+    <div class="module-card" onclick="startModule(3)" id="card-3">
       <span class="icon">⚖️</span>
-      <span class="badge">Mission 3</span>
+      <span class="badge" id="badge-3">Mission 3</span>
       <h3>AI 편향 감지기</h3>
       <p>AI 채용 시스템이 차별을 하고 있다? 숨겨진 편향을 찾아내세요.</p>
+      <div class="card-score" id="card-score-3" style="display:none; margin-top:10px;"></div>
     </div>
-    <div class="module-card" onclick="startModule(4)">
+    <div class="module-card" onclick="startModule(4)" id="card-4">
       <span class="icon">©️</span>
-      <span class="badge">Mission 4</span>
+      <span class="badge" id="badge-4">Mission 4</span>
       <h3>AI 저작권 재판</h3>
       <p>AI가 그린 그림, AI가 쓴 글의 저작권은 누구의 것일까요? 판사가 되어 판결하세요.</p>
+      <div class="card-score" id="card-score-4" style="display:none; margin-top:10px;"></div>
     </div>
-    <div class="module-card" onclick="startModule(5)">
+    <div class="module-card" onclick="startModule(5)" id="card-5">
       <span class="icon">🧠</span>
-      <span class="badge">Mission 5</span>
+      <span class="badge" id="badge-5">Mission 5</span>
       <h3>AI 윤리 재판관</h3>
       <p>의료·금융·형사 사법 AI 시스템의 판단, 당신은 어떻게 평가하시겠습니까?</p>
+      <div class="card-score" id="card-score-5" style="display:none; margin-top:10px;"></div>
     </div>
   </div>
 
@@ -255,6 +266,11 @@
     <button class="btn btn-primary pulse" onclick="startModule(1)" style="font-size:1.1rem; padding:16px 40px;">
       🚀 탐험 시작하기
     </button>
+    <div id="home-result-btn" style="display:none; margin-top:14px;">
+      <button class="btn btn-warn" onclick="showResult()" style="font-size:0.95rem;">
+        📊 지금까지 결과 보기
+      </button>
+    </div>
     <p style="margin-top:12px; color:var(--text2); font-size:0.85rem;">대진대학교 | AI 윤리 체험 프로그램</p>
   </div>
 </div>
@@ -580,8 +596,7 @@ function nextM1() {
   if (m1Current >= 4) {
     state.completed[0] = true;
     updateHomeCards();
-    if (!state.completed[1]) { showScreen('screen-m2-intro'); }
-    else { checkAllDone(); }
+    showMissionComplete(1, state.scores[0], 20, 'm1-content');
   } else { renderM1(); window.scrollTo(0,0); }
 }
 
@@ -711,8 +726,7 @@ function nextM2() {
   if (m2Current >= 3) {
     state.completed[1] = true;
     updateHomeCards();
-    if (!state.completed[2]) showScreen('screen-m3-intro');
-    else checkAllDone();
+    showMissionComplete(2, state.scores[1], 20, 'm2-content');
   } else { renderM2(); window.scrollTo(0,0); }
 }
 
@@ -853,8 +867,7 @@ function nextM3() {
   m3Current++;
   if (m3Current >= 4) {
     state.completed[2] = true; updateHomeCards();
-    if (!state.completed[3]) showScreen('screen-m4-intro');
-    else checkAllDone();
+    showMissionComplete(3, state.scores[2], 20, 'm3-content');
   } else { renderM3(); window.scrollTo(0,0); }
 }
 
@@ -971,8 +984,7 @@ function nextM4() {
   m4Current++;
   if (m4Current >= 4) {
     state.completed[3] = true; updateHomeCards();
-    if (!state.completed[4]) showScreen('screen-m5-intro');
-    else checkAllDone();
+    showMissionComplete(4, state.scores[3], 20, 'm4-content');
   } else { renderM4(); window.scrollTo(0,0); }
 }
 
@@ -1097,28 +1109,62 @@ function nextM5() {
   if (m5Current >= 4) {
     state.completed[4] = true;
     updateHomeCards();
-    showResult();
+    showMissionComplete(5, state.scores[4], 20, 'm5-content');
   } else { renderM5(); window.scrollTo(0,0); }
+}
+
+// ===== MISSION COMPLETE =====
+function showMissionComplete(mNum, score, maxScore, contentId) {
+  const names = ['','🚗 자율주행차 딜레마','🔍 AI 할루시네이션','⚖️ AI 편향 감지기','©️ AI 저작권 재판','🧠 AI 윤리 재판관'];
+  const nextNums = [null, 2, 3, 4, 5, null];
+  const pct = Math.round((score/maxScore)*100);
+  const stars = pct>=80?'⭐⭐⭐':pct>=60?'⭐⭐':pct>=40?'⭐':'';
+  const trophy = pct>=80?'🏆':pct>=60?'🥇':'🎖️';
+  const nextM = nextNums[mNum];
+  const nextBtn = nextM ? `<button class="btn btn-primary" onclick="showScreen('screen-m${nextM}-intro')">다음 미션 →</button>` : '';
+  const allDone = state.completed.every(c=>c);
+
+  document.getElementById(contentId).innerHTML = `
+    <div class="mission-done-card">
+      <span class="trophy">${trophy}</span>
+      <h3>미션 ${mNum} 완료!</h3>
+      <p style="color:var(--text2); margin-bottom:4px;">${names[mNum]}</p>
+      <div class="score-line">${score} / ${maxScore}점</div>
+      <div class="star-row">${stars}</div>
+      <p style="color:var(--text2); font-size:0.9rem; margin-bottom:24px;">
+        ${pct>=80?'훌륭합니다! 이 미션의 AI 윤리 개념을 완벽히 이해하셨습니다.':pct>=60?'잘 하셨습니다! 해설을 다시 읽으며 더 깊이 탐구해보세요.':'AI 윤리는 처음엔 어렵습니다. 해설을 꼭 확인해보세요!'}
+      </p>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="showScreen('screen-home')">🏠 홈으로 돌아가기</button>
+        ${nextBtn}
+        ${allDone ? '<button class="btn btn-warn" onclick="showResult()">📊 전체 결과 보기</button>' : '<button class="btn btn-success" onclick="showResult()">📊 지금까지 결과 보기</button>'}
+      </div>
+    </div>`;
+  window.scrollTo(0,0);
 }
 
 // ===== RESULTS =====
 function showResult() {
+  const doneCount = state.completed.filter(c=>c).length;
   const total = state.scores.reduce((a,b)=>a+b,0);
-  const maxPossible = 100;
+  const maxPossible = doneCount * 20 || 1;
   const pct = Math.round((total/maxPossible)*100);
 
   let grade, gradeClass, trophy, title, subtitle;
-  if (pct >= 90) { grade='S 등급'; gradeClass='grade-s'; trophy='🏆'; title='AI 윤리 전문가!'; subtitle='당신은 AI 윤리의 모든 측면을 꿰뚫고 있습니다!'; }
-  else if (pct >= 70) { grade='A 등급'; gradeClass='grade-a'; trophy='🥇'; title='AI 윤리 탐험 성공!'; subtitle='훌륭합니다! AI 윤리에 대한 깊은 이해를 보여주셨습니다.'; }
-  else if (pct >= 50) { grade='B 등급'; gradeClass='grade-b'; trophy='🎖️'; title='좋은 시도!'; subtitle='AI 윤리의 복잡성을 경험하셨군요. 더 깊이 탐구해보세요!'; }
-  else { grade='C 등급'; gradeClass='grade-c'; trophy='🌱'; title='AI 윤리 첫걸음!'; subtitle='AI 윤리는 복잡한 주제입니다. 다시 도전해보세요!'; }
+  if (pct >= 90) { grade='S 등급'; gradeClass='grade-s'; trophy='🏆'; title='AI 윤리 전문가!'; subtitle=`완료한 ${doneCount}개 미션 모두 완벽하게 이해하셨습니다!`; }
+  else if (pct >= 70) { grade='A 등급'; gradeClass='grade-a'; trophy='🥇'; title='AI 윤리 탐험 성공!'; subtitle=`${doneCount}개 미션 완료 — 훌륭한 이해력을 보여주셨습니다.`; }
+  else if (pct >= 50) { grade='B 등급'; gradeClass='grade-b'; trophy='🎖️'; title='좋은 시도!'; subtitle=`${doneCount}개 미션 완료 — 더 많은 미션에 도전해보세요!`; }
+  else { grade='C 등급'; gradeClass='grade-c'; trophy='🌱'; title='AI 윤리 첫걸음!'; subtitle=`${doneCount}개 미션 완료 — AI 윤리는 복잡한 주제입니다. 계속 도전하세요!`; }
 
   const mNames = ['🚗 자율주행차 딜레마','🔍 AI 할루시네이션','⚖️ AI 편향 감지','©️ AI 저작권','🧠 AI 윤리 판결'];
   const mMax = [20, 20, 20, 20, 20];
-  let best = 0, bestName = '';
-  state.scores.forEach((s,i) => { if(s > best || best===0) { best=s; bestName=mNames[i].split(' ')[1]; } });
+  let best = 0, bestName = '-';
+  state.scores.forEach((s,i) => { if(state.completed[i] && s >= best) { best=s; bestName=mNames[i].split(' ')[1]; } });
 
   const moduleRows = mNames.map((name, i) => {
+    if (!state.completed[i]) {
+      return `<div class="module-result-row"><span style="color:var(--text2)">${name}</span><span style="color:var(--text2); font-size:0.8rem;">— 미완료</span></div>`;
+    }
     const pctM = Math.round((state.scores[i]/mMax[i])*100);
     const stars = pctM>=80?'⭐⭐⭐':pctM>=60?'⭐⭐':'⭐';
     return `<div class="module-result-row"><span>${name}</span><span class="stars">${stars} ${state.scores[i]}/${mMax[i]}점</span></div>`;
@@ -1146,24 +1192,38 @@ function showResult() {
   showScreen('screen-result');
 }
 
-function checkAllDone() {
-  if (state.completed.every(c => c)) showResult();
-}
-
 function updateHomeCards() {
-  const cards = document.querySelectorAll('.module-card');
+  const pcts = [100, 100, 100, 100, 100];
   state.completed.forEach((done, i) => {
+    const badge = document.getElementById('badge-'+(i+1));
+    const scoreEl = document.getElementById('card-score-'+(i+1));
     if (done) {
-      const badge = cards[i].querySelector('.badge');
       if (badge) { badge.textContent = '✓ 완료'; badge.style.background = '#43e97b'; badge.style.color = '#1a1a1a'; }
+      if (scoreEl) {
+        const p = Math.round((state.scores[i]/20)*100);
+        const stars = p>=80?'⭐⭐⭐':p>=60?'⭐⭐':'⭐';
+        scoreEl.style.display = 'block';
+        scoreEl.innerHTML = `${stars} ${state.scores[i]}/20점`;
+      }
     }
   });
+  if (state.completed.some(c=>c)) {
+    const btn = document.getElementById('home-result-btn');
+    if (btn) btn.style.display = 'block';
+  }
 }
 
 function restartGame() {
   state.scores = [0,0,0,0,0];
   state.completed = [false,false,false,false,false];
-  updateHomeCards();
+  for (let i=1; i<=5; i++) {
+    const badge = document.getElementById('badge-'+i);
+    const scoreEl = document.getElementById('card-score-'+i);
+    if (badge) { badge.textContent = 'Mission '+i; badge.style.background = ''; badge.style.color = ''; }
+    if (scoreEl) { scoreEl.style.display = 'none'; scoreEl.innerHTML = ''; }
+  }
+  const btn = document.getElementById('home-result-btn');
+  if (btn) btn.style.display = 'none';
   showScreen('screen-home');
 }
 
