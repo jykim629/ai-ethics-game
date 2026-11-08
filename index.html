@@ -48,6 +48,14 @@
   .hero { text-align:center; padding:40px 20px 20px; max-width:800px; }
   .hero-emoji { font-size:5rem; display:block; animation:float 3s ease-in-out infinite; }
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+  .hero-robot { display:block; margin:0 auto; animation:float 3s ease-in-out infinite; filter:drop-shadow(0 0 18px rgba(108,99,255,0.5)); }
+  @keyframes blink { 0%,90%,100%{transform:scaleY(1)} 95%{transform:scaleY(0.08)} }
+  .robot-eye { animation:blink 4s ease-in-out infinite; transform-origin:center; }
+  .robot-eye-r { animation:blink 4s ease-in-out infinite 0.1s; transform-origin:center; }
+  @keyframes antenna-pulse { 0%,100%{opacity:1; r:4} 50%{opacity:0.4; r:6} }
+  .antenna-dot { animation:antenna-pulse 1.5s ease-in-out infinite; }
+  @keyframes scan { 0%{stroke-dashoffset:60} 100%{stroke-dashoffset:0} }
+  .scan-line { stroke-dasharray:60; animation:scan 2s linear infinite; }
   .hero h1 { font-size:2.8rem; font-weight:900; background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:16px 0 8px; }
   .hero p { color:var(--text2); font-size:1.1rem; line-height:1.6; }
 
@@ -214,7 +222,72 @@
 <!-- ==================== HOME SCREEN ==================== -->
 <div id="screen-home" class="screen active">
   <div class="hero">
-    <span class="hero-emoji">🤖</span>
+    <svg class="hero-robot" width="140" height="160" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#6c63ff"/>
+          <stop offset="100%" stop-color="#43e97b"/>
+        </linearGradient>
+        <linearGradient id="headGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#8b85ff"/>
+          <stop offset="100%" stop-color="#6c63ff"/>
+        </linearGradient>
+        <linearGradient id="faceGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#0d1b3e"/>
+          <stop offset="100%" stop-color="#0a0e1a"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Antenna -->
+      <line x1="70" y1="10" x2="70" y2="28" stroke="#6c63ff" stroke-width="2.5" stroke-linecap="round"/>
+      <circle class="antenna-dot" cx="70" cy="7" r="4" fill="#ff6584" filter="url(#glow)"/>
+      <!-- Head -->
+      <rect x="28" y="28" width="84" height="62" rx="16" fill="url(#headGrad)" stroke="#8b85ff" stroke-width="1.5"/>
+      <!-- Face panel -->
+      <rect x="38" y="36" width="64" height="46" rx="10" fill="url(#faceGrad)"/>
+      <!-- Left eye group -->
+      <g class="robot-eye" style="transform-box:fill-box">
+        <rect x="45" y="46" width="22" height="16" rx="6" fill="#6c63ff" opacity="0.25"/>
+        <rect x="49" y="49" width="14" height="10" rx="4" fill="#6c63ff"/>
+        <circle cx="56" cy="54" r="3.5" fill="#fff"/>
+        <circle cx="57.5" cy="52.5" r="1.2" fill="#43e97b"/>
+      </g>
+      <!-- Right eye group -->
+      <g class="robot-eye-r" style="transform-box:fill-box">
+        <rect x="73" y="46" width="22" height="16" rx="6" fill="#ff6584" opacity="0.2"/>
+        <rect x="77" y="49" width="14" height="10" rx="4" fill="#ff6584"/>
+        <circle cx="84" cy="54" r="3.5" fill="#fff"/>
+        <circle cx="85.5" cy="52.5" r="1.2" fill="#43e97b"/>
+      </g>
+      <!-- Mouth / scan line area -->
+      <rect x="46" y="68" width="48" height="8" rx="4" fill="#1a2235"/>
+      <line class="scan-line" x1="48" y1="72" x2="92" y2="72" stroke="#43e97b" stroke-width="2" stroke-linecap="round"/>
+      <!-- Ear bolts -->
+      <circle cx="28" cy="55" r="5" fill="#6c63ff" stroke="#8b85ff" stroke-width="1"/>
+      <circle cx="28" cy="55" r="2.5" fill="#43e97b"/>
+      <circle cx="112" cy="55" r="5" fill="#6c63ff" stroke="#8b85ff" stroke-width="1"/>
+      <circle cx="112" cy="55" r="2.5" fill="#ff6584"/>
+      <!-- Neck -->
+      <rect x="58" y="90" width="24" height="10" rx="4" fill="#4a44cc"/>
+      <!-- Body -->
+      <rect x="22" y="100" width="96" height="52" rx="18" fill="url(#bodyGrad)" stroke="#8b85ff" stroke-width="1.5"/>
+      <!-- Chest panel -->
+      <rect x="38" y="110" width="64" height="32" rx="8" fill="rgba(0,0,0,0.3)"/>
+      <!-- Chest indicators -->
+      <circle cx="52" cy="122" r="5" fill="#43e97b" filter="url(#glow)" opacity="0.9"/>
+      <circle cx="70" cy="122" r="5" fill="#6c63ff" filter="url(#glow)" opacity="0.9"/>
+      <circle cx="88" cy="122" r="5" fill="#ff6584" filter="url(#glow)" opacity="0.9"/>
+      <rect x="43" y="132" width="54" height="4" rx="2" fill="rgba(108,99,255,0.4)"/>
+      <rect x="43" y="132" width="32" height="4" rx="2" fill="#6c63ff"/>
+      <!-- Arms -->
+      <rect x="4" y="104" width="16" height="38" rx="8" fill="#5a53dd" stroke="#8b85ff" stroke-width="1"/>
+      <circle cx="12" cy="146" r="7" fill="#4a44cc" stroke="#8b85ff" stroke-width="1"/>
+      <rect x="120" y="104" width="16" height="38" rx="8" fill="#5a53dd" stroke="#8b85ff" stroke-width="1"/>
+      <circle cx="128" cy="146" r="7" fill="#4a44cc" stroke="#8b85ff" stroke-width="1"/>
+    </svg>
     <h1>AI 윤리 탐험대</h1>
     <p>AI가 가져오는 윤리적 딜레마를 직접 체험해보세요!<br>자율주행차부터 저작권까지 — 당신의 선택이 미래를 만듭니다.</p>
     <div style="margin-top:16px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
