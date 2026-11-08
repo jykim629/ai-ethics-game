@@ -690,7 +690,7 @@ function handleHighlightClick(el) {
     const dotIdx = m2Found.length - 1;
     const dot = document.getElementById('dot-'+dotIdx);
     if (dot) dot.classList.add('found');
-    state.scores[1] += Math.round(20/3/d.fakes.length);
+    state.scores[1] += [7, 7, 6][m2Current];
     document.getElementById('m2-score').textContent = state.scores[1];
     fbEl.className = 'feedback-box show correct-fb';
     fbEl.innerHTML = `<h4>✅ 할루시네이션 발견!</h4><p>${info.text}</p>`;
@@ -1145,7 +1145,7 @@ function showResult() {
   const doneCount = state.completed.filter(c=>c).length;
   const total = state.scores.reduce((a,b)=>a+b,0);
   const maxPossible = doneCount * 20 || 1;
-  const pct = Math.round((total/maxPossible)*100);
+  const pct = Math.min(100, Math.round((total/maxPossible)*100));
 
   let grade, gradeClass, trophy, title, subtitle;
   if (pct >= 90) { grade='S 등급'; gradeClass='grade-s'; trophy='🏆'; title='AI 윤리 전문가!'; subtitle=`완료한 ${doneCount}개 미션 모두 완벽하게 이해하셨습니다!`; }
