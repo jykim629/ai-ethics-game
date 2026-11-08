@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 윤리 탐험대 🤖</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #131929;
+    --card2: #1a2235;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --accent4: #f7971e;
+    --text: #e8eaf6;
+    --text2: #8892b0;
+    --border: #2a3550;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-serif; min-height:100vh; overflow-x:hidden; }
+
+  /* Animated background */
+  body::before {
+    content:''; position:fixed; inset:0; z-index:-1;
+    background: radial-gradient(ellipse at 20% 20%, rgba(108,99,255,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255,101,132,0.1) 0%, transparent 50%);
+    animation: bgPulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes bgPulse { from{opacity:0.6} to{opacity:1} }
+
+  .screen { display:none; min-height:100vh; padding:20px; }
+  .screen.active { display:flex; flex-direction:column; align-items:center; }
+
+  /* ===== HEADER ===== */
+  .game-header {
+    width:100%; max-width:900px; display:flex; justify-content:space-between; align-items:center;
+    padding:12px 20px; background:var(--card); border-radius:16px; margin-bottom:24px;
+    border:1px solid var(--border);
+  }
+  .score-display { font-size:1.1rem; font-weight:700; color:var(--accent3); }
+  .progress-bar { flex:1; margin:0 16px; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:4px; transition:width 0.5s; }
+  .module-label { font-size:0.85rem; color:var(--text2); }
+
+  /* ===== HOME SCREEN ===== */
+  .hero { text-align:center; padding:40px 20px 20px; max-width:800px; }
+  .hero-emoji { font-size:5rem; display:block; animation:float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+  .hero h1 { font-size:2.8rem; font-weight:900; background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:16px 0 8px; }
+  .hero p { color:var(--text2); font-size:1.1rem; line-height:1.6; }
+
+  .module-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; max-width:900px; width:100%; margin-top:32px; }
+  .module-card {
+    background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px;
+    cursor:pointer; transition:all 0.3s; position:relative; overflow:hidden;
+  }
+  .module-card::before { content:''; position:absolute; inset:0; opacity:0; transition:opacity 0.3s; }
+  .module-card:hover { transform:translateY(-6px); border-color:var(--accent); box-shadow:0 12px 40px rgba(108,99,255,0.3); }
+  .module-card:hover::before { opacity:1; background:linear-gradient(135deg,rgba(108,99,255,0.05),transparent); }
+  .module-card .icon { font-size:2.8rem; margin-bottom:12px; display:block; }
+  .module-card h3 { font-size:1.15rem; font-weight:700; margin-bottom:8px; }
+  .module-card p { font-size:0.85rem; color:var(--text2); line-height:1.5; }
+  .module-card .badge { position:absolute; top:16px; right:16px; background:var(--accent); color:#fff; border-radius:20px; padding:3px 10px; font-size:0.75rem; font-weight:700; }
+  .module-card.locked { opacity:0.5; cursor:not-allowed; }
+  .module-card.locked:hover { transform:none; border-color:var(--border); box-shadow:none; }
+  .module-card.completed .badge { background:var(--accent3); }
+
+  /* ===== INTRO SCREENS ===== */
+  .intro-box { max-width:720px; width:100%; background:var(--card); border-radius:24px; padding:40px; border:1px solid var(--border); text-align:center; }
+  .intro-box .big-icon { font-size:5rem; margin-bottom:20px; display:block; }
+  .intro-box h2 { font-size:2rem; font-weight:800; margin-bottom:16px; }
+  .intro-box p { color:var(--text2); line-height:1.7; margin-bottom:12px; font-size:1rem; }
+  .intro-box .rules { background:var(--card2); border-radius:12px; padding:16px 20px; text-align:left; margin:20px 0; }
+  .intro-box .rules li { color:var(--text2); margin:6px 0; padding-left:4px; }
+  .intro-box .rules li::marker { color:var(--accent); }
+
+  /* ===== BUTTONS ===== */
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:14px 32px; border-radius:50px; border:none; cursor:pointer; font-size:1rem; font-weight:700; transition:all 0.2s; text-decoration:none; }
+  .btn-primary { background:linear-gradient(135deg,var(--accent),#8b5cf6); color:#fff; box-shadow:0 4px 20px rgba(108,99,255,0.4); }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(108,99,255,0.5); }
+  .btn-secondary { background:var(--card2); color:var(--text); border:1px solid var(--border); }
+  .btn-secondary:hover { border-color:var(--accent); }
+  .btn-danger { background:linear-gradient(135deg,#ff4757,#ff6b81); color:#fff; }
+  .btn-success { background:linear-gradient(135deg,var(--accent3),#00b894); color:#1a1a1a; }
+  .btn-warn { background:linear-gradient(135deg,var(--accent4),#fcb045); color:#1a1a1a; }
+  .btn-group { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:24px; }
+
+  /* ===== SCENARIO CARD ===== */
+  .scenario-wrap { max-width:800px; width:100%; }
+  .scenario-card { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:32px; margin-bottom:20px; }
+  .scenario-card .q-num { font-size:0.8rem; color:var(--accent); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
+  .scenario-card h3 { font-size:1.3rem; font-weight:700; margin-bottom:16px; line-height:1.5; }
+  .scenario-card .scene-img { width:100%; height:160px; border-radius:12px; margin-bottom:16px; display:flex; align-items:center; justify-content:center; font-size:5rem; background:var(--card2); border:1px solid var(--border); }
+  .scenario-card p { color:var(--text2); line-height:1.7; font-size:0.95rem; }
+
+  .choices { display:grid; gap:12px; margin-top:20px; }
+  .choice-btn {
+    background:var(--card2); border:2px solid var(--border); border-radius:14px; padding:16px 20px;
+    text-align:left; cursor:pointer; transition:all 0.25s; color:var(--text); font-size:0.95rem; line-height:1.5;
+    display:flex; align-items:flex-start; gap:12px;
+  }
+  .choice-btn:hover { border-color:var(--accent); background:rgba(108,99,255,0.1); transform:translateX(4px); }
+  .choice-btn.selected { border-color:var(--accent); background:rgba(108,99,255,0.15); }
+  .choice-btn.correct { border-color:var(--accent3)!important; background:rgba(67,233,123,0.15)!important; }
+  .choice-btn.wrong { border-color:var(--accent2)!important; background:rgba(255,101,132,0.15)!important; }
+  .choice-btn.disabled { pointer-events:none; }
+  .choice-letter { width:28px; height:28px; border-radius:8px; background:var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; flex-shrink:0; }
+
+  /* ===== FEEDBACK ===== */
+  .feedback-box { border-radius:16px; padding:20px 24px; margin-top:16px; display:none; }
+  .feedback-box.show { display:block; animation:slideIn 0.3s ease; }
+  .feedback-box.correct-fb { background:rgba(67,233,123,0.1); border:1px solid rgba(67,233,123,0.4); }
+  .feedback-box.wrong-fb { background:rgba(255,101,132,0.1); border:1px solid rgba(255,101,132,0.4); }
+  .feedback-box.info-fb { background:rgba(108,99,255,0.1); border:1px solid rgba(108,99,255,0.4); }
+  .feedback-box h4 { font-size:1rem; font-weight:700; margin-bottom:8px; }
+  .feedback-box p { font-size:0.9rem; color:var(--text2); line-height:1.6; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ===== HALLUCINATION MODULE ===== */
+  .text-block { background:var(--card2); border-radius:14px; padding:20px; margin:16px 0; line-height:1.9; font-size:0.95rem; border:1px solid var(--border); }
+  .text-block .highlight { background:rgba(255,235,59,0.2); border-radius:4px; padding:1px 4px; cursor:pointer; border-bottom:2px solid #ffd600; transition:all 0.2s; }
+  .text-block .highlight:hover { background:rgba(255,235,59,0.4); }
+  .text-block .highlight.marked-correct { background:rgba(67,233,123,0.3); border-color:var(--accent3); }
+  .text-block .highlight.marked-wrong { background:rgba(255,101,132,0.3); border-color:var(--accent2); }
+  .clue-counter { display:flex; gap:8px; margin:12px 0; align-items:center; }
+  .clue-dot { width:12px; height:12px; border-radius:50%; background:var(--border); transition:background 0.3s; }
+  .clue-dot.found { background:var(--accent3); box-shadow:0 0 8px var(--accent3); }
+
+  /* ===== STATS ===== */
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; max-width:700px; width:100%; margin:20px 0; }
+  .stat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; text-align:center; }
+  .stat-card .num { font-size:2.4rem; font-weight:900; }
+  .stat-card .lbl { font-size:0.8rem; color:var(--text2); margin-top:4px; }
+
+  /* ===== RESULT SCREEN ===== */
+  .result-wrap { max-width:720px; width:100%; text-align:center; }
+  .result-trophy { font-size:6rem; animation:float 3s ease-in-out infinite; display:block; margin-bottom:16px; }
+  .result-wrap h2 { font-size:2.2rem; font-weight:900; margin-bottom:8px; }
+  .grade-badge { display:inline-block; padding:8px 28px; border-radius:50px; font-size:1.1rem; font-weight:800; margin:16px 0; }
+  .grade-s { background:linear-gradient(135deg,#ffd700,#ffb400); color:#1a1a1a; }
+  .grade-a { background:linear-gradient(135deg,var(--accent3),#00b894); color:#1a1a1a; }
+  .grade-b { background:linear-gradient(135deg,var(--accent),#8b5cf6); color:#fff; }
+  .grade-c { background:linear-gradient(135deg,var(--accent4),#fcb045); color:#1a1a1a; }
+  .module-results { text-align:left; background:var(--card); border-radius:16px; padding:20px; margin:20px 0; border:1px solid var(--border); }
+  .module-result-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+  .module-result-row:last-child { border-bottom:none; }
+  .module-result-row .stars { color:#ffd700; }
+
+  /* ===== TIMER ===== */
+  .timer-bar { width:100%; height:6px; background:var(--border); border-radius:3px; margin-bottom:16px; overflow:hidden; }
+  .timer-fill { height:100%; background:linear-gradient(90deg,var(--accent3),var(--accent4),var(--accent2)); border-radius:3px; transition:width 0.1s linear; }
+
+  /* ===== COPYRIGHT MODULE ===== */
+  .court-scene { display:flex; gap:16px; margin:16px 0; flex-wrap:wrap; }
+  .evidence-card { flex:1; min-width:200px; background:var(--card2); border-radius:14px; padding:16px; border:2px solid var(--border); cursor:pointer; transition:all 0.25s; }
+  .evidence-card:hover { border-color:var(--accent4); }
+  .evidence-card.selected-evidence { border-color:var(--accent4); background:rgba(247,151,30,0.1); }
+  .evidence-card h4 { font-size:0.9rem; font-weight:700; margin-bottom:8px; }
+  .evidence-card p { font-size:0.8rem; color:var(--text2); line-height:1.5; }
+
+  /* ===== BIAS MODULE ===== */
+  .resume-card { background:var(--card2); border-radius:14px; padding:20px; border:2px solid var(--border); margin:12px 0; }
+  .resume-card .resume-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .avatar { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.6rem; background:var(--border); flex-shrink:0; }
+  .resume-card h4 { font-size:1rem; font-weight:700; }
+  .resume-card .sub { font-size:0.8rem; color:var(--text2); }
+  .tag { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; margin:3px; }
+  .tag-blue { background:rgba(108,99,255,0.2); color:#a78bfa; border:1px solid rgba(108,99,255,0.3); }
+  .tag-green { background:rgba(67,233,123,0.2); color:#6ee7b7; border:1px solid rgba(67,233,123,0.3); }
+  .tag-red { background:rgba(255,101,132,0.2); color:#fca5a5; border:1px solid rgba(255,101,132,0.3); }
+  .ai-decision { background:var(--card); border:2px solid var(--accent2); border-radius:14px; padding:16px; margin:16px 0; }
+  .ai-decision h4 { color:var(--accent2); font-size:0.85rem; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+
+  /* Mobile */
+  @media(max-width:600px) {
+    .hero h1 { font-size:1.9rem; }
+    .module-grid { grid-template-columns:1fr; }
+    .intro-box { padding:24px 20px; }
+    .scenario-card { padding:20px; }
+    .court-scene { flex-direction:column; }
+  }
+
+  /* Tooltip */
+  .tooltip { position:relative; }
+  .tooltip-text { visibility:hidden; background:var(--card); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:8px 12px; font-size:0.8rem; position:absolute; z-index:100; bottom:120%; left:50%; transform:translateX(-50%); white-space:nowrap; box-shadow:var(--shadow); }
+  .tooltip:hover .tooltip-text { visibility:visible; }
+
+  /* Confetti placeholder */
+  .confetti-wrap { position:fixed; inset:0; pointer-events:none; z-index:999; }
+  .confetti-piece { position:absolute; width:10px; height:10px; border-radius:2px; animation:confettiFall 3s linear forwards; }
+  @keyframes confettiFall { 0%{transform:translateY(-10px) rotate(0deg); opacity:1} 100%{transform:translateY(100vh) rotate(720deg); opacity:0} }
+
+  /* Pulse animation for buttons */
+  .pulse { animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 4px 20px rgba(108,99,255,0.4)} 50%{box-shadow:0 4px 40px rgba(108,99,255,0.7)} }
+
+  .chip { display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; }
+  .chip-blue { background:rgba(108,99,255,0.2); border:1px solid rgba(108,99,255,0.4); color:#a78bfa; }
+  .chip-green { background:rgba(67,233,123,0.15); border:1px solid rgba(67,233,123,0.4); color:#6ee7b7; }
+  .chip-red { background:rgba(255,101,132,0.15); border:1px solid rgba(255,101,132,0.4); color:#fca5a5; }
+  .chip-orange { background:rgba(247,151,30,0.15); border:1px solid rgba(247,151,30,0.4); color:#fbbf24; }
+</style>
+</head>
+<body>
+
+<!-- ==================== HOME SCREEN ==================== -->
+<div id="screen-home" class="screen active">
+  <div class="hero">
+    <span class="hero-emoji">🤖</span>
+    <h1>AI 윤리 탐험대</h1>
+    <p>AI가 가져오는 윤리적 딜레마를 직접 체험해보세요!<br>자율주행차부터 저작권까지 — 당신의 선택이 미래를 만듭니다.</p>
+    <div style="margin-top:16px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+      <span class="chip chip-blue">🎮 5개 미션</span>
+      <span class="chip chip-green">⭐ 100점 만점</span>
+      <span class="chip chip-orange">⏱ 약 20분</span>
+    </div>
+  </div>
+
+  <div class="module-grid">
+    <div class="module-card" onclick="startModule(1)">
+      <span class="icon">🚗</span>
+      <span class="badge">Mission 1</span>
+      <h3>자율주행차 딜레마</h3>
+      <p>브레이크가 고장났습니다. AI는 어떤 선택을 해야 할까요? 트롤리 문제를 직접 체험하세요.</p>
+    </div>
+    <div class="module-card" onclick="startModule(2)">
+      <span class="icon">🔍</span>
+      <span class="badge">Mission 2</span>
+      <h3>AI 할루시네이션 탐지</h3>
+      <p>AI가 만들어낸 가짜 정보를 찾아라! 거짓말하는 AI를 잡아내는 탐정이 되어보세요.</p>
+    </div>
+    <div class="module-card" onclick="startModule(3)">
+      <span class="icon">⚖️</span>
+      <span class="badge">Mission 3</span>
+      <h3>AI 편향 감지기</h3>
+      <p>AI 채용 시스템이 차별을 하고 있다? 숨겨진 편향을 찾아내세요.</p>
+    </div>
+    <div class="module-card" onclick="startModule(4)">
+      <span class="icon">©️</span>
+      <span class="badge">Mission 4</span>
+      <h3>AI 저작권 재판</h3>
+      <p>AI가 그린 그림, AI가 쓴 글의 저작권은 누구의 것일까요? 판사가 되어 판결하세요.</p>
+    </div>
+    <div class="module-card" onclick="startModule(5)">
+      <span class="icon">🧠</span>
+      <span class="badge">Mission 5</span>
+      <h3>AI 윤리 재판관</h3>
+      <p>의료·금융·형사 사법 AI 시스템의 판단, 당신은 어떻게 평가하시겠습니까?</p>
+    </div>
+  </div>
+
+  <div style="margin-top:32px; text-align:center;">
+    <button class="btn btn-primary pulse" onclick="startModule(1)" style="font-size:1.1rem; padding:16px 40px;">
+      🚀 탐험 시작하기
+    </button>
+    <p style="margin-top:12px; color:var(--text2); font-size:0.85rem;">대진대학교 | AI 윤리 체험 프로그램</p>
+  </div>
+</div>
+
+<!-- ==================== MODULE 1: AUTONOMOUS VEHICLE ==================== -->
+<div id="screen-m1-intro" class="screen">
+  <div class="intro-box">
+    <span class="big-icon">🚗💨</span>
+    <h2>Mission 1: 자율주행차 딜레마</h2>
+    <p>자율주행차가 피할 수 없는 사고 상황에 직면했습니다.<br>AI는 어떤 결정을 내려야 할까요?</p>
+    <div class="rules">
+      <ul>
+        <li>각 시나리오에서 AI가 취해야 할 행동을 선택하세요</li>
+        <li>선택 후 윤리적 분석을 확인할 수 있습니다</li>
+        <li>정해진 정답이 없는 경우도 있습니다 — 토론해보세요!</li>
+        <li>총 4개의 시나리오, 각 5점 = 최대 20점</li>
+      </ul>
+    </div>
+    <p style="font-size:0.85rem; color:var(--accent);">💡 이 딜레마는 MIT "Moral Machine" 실험에서 영감을 받았습니다</p>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="showScreen('screen-home')">← 돌아가기</button>
+      <button class="btn btn-primary" onclick="showScreen('screen-m1'); initM1()">시작! →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-m1" class="screen">
+  <div class="game-header" style="max-width:800px;">
+    <span class="score-display">🏆 <span id="m1-score">0</span>점</span>
+    <div class="progress-bar"><div class="progress-fill" id="m1-progress" style="width:0%"></div></div>
+    <span class="module-label">🚗 미션 1 | <span id="m1-q-num">1</span>/4</span>
+  </div>
+  <div class="scenario-wrap" id="m1-content"></div>
+</div>
+
+<!-- ==================== MODULE 2: HALLUCINATION ==================== -->
+<div id="screen-m2-intro" class="screen">
+  <div class="intro-box">
+    <span class="big-icon">🔍🤥</span>
+    <h2>Mission 2: AI 할루시네이션 탐지기</h2>
+    <p>AI 챗봇이 사실인 척 거짓 정보를 말하는 "할루시네이션"을 경험해보세요!</p>
+    <div class="rules">
+      <ul>
+        <li>AI가 작성한 텍스트 안에 가짜 사실이 숨어있습니다</li>
+        <li>노란색으로 밑줄 그어진 부분을 클릭해서 가짜를 찾으세요</li>
+        <li>각 텍스트마다 1~3개의 할루시네이션이 있습니다</li>
+        <li>총 3개 텍스트, 최대 20점</li>
+      </ul>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="showScreen('screen-home')">← 돌아가기</button>
+      <button class="btn btn-primary" onclick="showScreen('screen-m2'); initM2()">탐지 시작! →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-m2" class="screen">
+  <div class="game-header" style="max-width:800px;">
+    <span class="score-display">🏆 <span id="m2-score">0</span>점</span>
+    <div class="progress-bar"><div class="progress-fill" id="m2-progress" style="width:0%"></div></div>
+    <span class="module-label">🔍 미션 2 | <span id="m2-q-num">1</span>/3</span>
+  </div>
+  <div class="scenario-wrap" id="m2-content"></div>
+</div>
+
+<!-- ==================== MODULE 3: BIAS ==================== -->
+<div id="screen-m3-intro" class="screen">
+  <div class="intro-box">
+    <span class="big-icon">⚖️🤖</span>
+    <h2>Mission 3: AI 편향 감지기</h2>
+    <p>AI 채용 시스템이 여러분 앞에 놓인 지원자들을 평가합니다.<br>숨겨진 차별과 편향을 찾아낼 수 있나요?</p>
+    <div class="rules">
+      <ul>
+        <li>AI의 채용 결정을 보고 편향 여부를 판단하세요</li>
+        <li>왜 그 결정이 편향되었는지 이유를 선택하세요</li>
+        <li>총 4개 시나리오, 각 5점 = 최대 20점</li>
+      </ul>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="showScreen('screen-home')">← 돌아가기</button>
+      <button class="btn btn-primary" onclick="showScreen('screen-m3'); initM3()">조사 시작! →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-m3" class="screen">
+  <div class="game-header" style="max-width:800px;">
+    <span class="score-display">🏆 <span id="m3-score">0</span>점</span>
+    <div class="progress-bar"><div class="progress-fill" id="m3-progress" style="width:0%"></div></div>
+    <span class="module-label">⚖️ 미션 3 | <span id="m3-q-num">1</span>/4</span>
+  </div>
+  <div class="scenario-wrap" id="m3-content"></div>
+</div>
+
+<!-- ==================== MODULE 4: COPYRIGHT ==================== -->
+<div id="screen-m4-intro" class="screen">
+  <div class="intro-box">
+    <span class="big-icon">©️⚖️</span>
+    <h2>Mission 4: AI 저작권 재판</h2>
+    <p>AI가 창작한 작품의 저작권을 둘러싼 법정 싸움.<br>당신이 판사가 되어 올바른 판결을 내려보세요!</p>
+    <div class="rules">
+      <ul>
+        <li>각 케이스의 증거를 살피고 판결을 내리세요</li>
+        <li>저작권법과 AI 창작물의 현실을 배울 수 있습니다</li>
+        <li>총 4개 케이스, 각 5점 = 최대 20점</li>
+      </ul>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="showScreen('screen-home')">← 돌아가기</button>
+      <button class="btn btn-primary" onclick="showScreen('screen-m4'); initM4()">재판 시작! →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-m4" class="screen">
+  <div class="game-header" style="max-width:800px;">
+    <span class="score-display">🏆 <span id="m4-score">0</span>점</span>
+    <div class="progress-bar"><div class="progress-fill" id="m4-progress" style="width:0%"></div></div>
+    <span class="module-label">©️ 미션 4 | <span id="m4-q-num">1</span>/4</span>
+  </div>
+  <div class="scenario-wrap" id="m4-content"></div>
+</div>
+
+<!-- ==================== MODULE 5: ETHICS JUDGE ==================== -->
+<div id="screen-m5-intro" class="screen">
+  <div class="intro-box">
+    <span class="big-icon">🧠🔮</span>
+    <h2>Mission 5: AI 윤리 재판관</h2>
+    <p>의료 진단, 범죄 예측, 대출 심사… AI가 인생을 결정하는 시대!<br>당신은 이 AI 시스템에 동의하시겠습니까?</p>
+    <div class="rules">
+      <ul>
+        <li>AI가 내린 결정을 보고 윤리적으로 평가하세요</li>
+        <li>각 결정의 문제점을 짚어내고 개선 방향을 제시하세요</li>
+        <li>총 4개 시나리오, 각 5점 = 최대 20점</li>
+      </ul>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="showScreen('screen-home')">← 돌아가기</button>
+      <button class="btn btn-primary" onclick="showScreen('screen-m5'); initM5()">판결 시작! →</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-m5" class="screen">
+  <div class="game-header" style="max-width:800px;">
+    <span class="score-display">🏆 <span id="m5-score">0</span>점</span>
+    <div class="progress-bar"><div class="progress-fill" id="m5-progress" style="width:0%"></div></div>
+    <span class="module-label">🧠 미션 5 | <span id="m5-q-num">1</span>/4</span>
+  </div>
+  <div class="scenario-wrap" id="m5-content"></div>
+</div>
+
+<!-- ==================== FINAL RESULT ==================== -->
+<div id="screen-result" class="screen">
+  <div class="result-wrap">
+    <span class="result-trophy" id="result-trophy">🏆</span>
+    <h2 id="result-title">탐험 완료!</h2>
+    <p id="result-subtitle" style="color:var(--text2); font-size:1.05rem;"></p>
+    <div class="grade-badge grade-a" id="result-grade"></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num" id="rs-total" style="background:linear-gradient(135deg,#ffd700,#ffb400);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">0</div><div class="lbl">총점</div></div>
+      <div class="stat-card"><div class="num" id="rs-pct" style="color:var(--accent3);">0%</div><div class="lbl">정확도</div></div>
+      <div class="stat-card"><div class="num" id="rs-best" style="color:var(--accent);">-</div><div class="lbl">최고 미션</div></div>
+    </div>
+    <div class="module-results" id="module-result-list"></div>
+    <div id="result-comment" style="background:var(--card);border-radius:16px;padding:20px;margin:16px 0;border:1px solid var(--border);text-align:left;"></div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="restartGame()">🔄 다시 도전</button>
+      <button class="btn btn-secondary" onclick="showScreen('screen-home')">🏠 홈으로</button>
+    </div>
+    <p style="margin-top:20px; color:var(--text2); font-size:0.8rem;">AI 윤리 탐험대 | 대진대학교 | 2026</p>
+  </div>
+</div>
+
+<div class="confetti-wrap" id="confetti"></div>
+
+<script>
+// ===== STATE =====
+const state = {
+  scores: [0,0,0,0,0],
+  completed: [false,false,false,false,false]
+};
+
+// ===== NAVIGATION =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startModule(n) {
+  showScreen('screen-m'+n+'-intro');
+}
+
+// ===== MODULE 1: AUTONOMOUS VEHICLE =====
+const m1Data = [
+  {
+    q: "브레이크 고장! 직진하면 횡단보도의 노인 3명, 왼쪽으로 꺾으면 1명의 어린이가 위험합니다. AI는 어떻게 해야 할까요?",
+    emoji: "🚗💥",
+    choices: [
+      { text: "직진한다 — 최소한의 개입으로 현재 경로를 유지한다", key: "A" },
+      { text: "왼쪽으로 꺾어 1명을 구한다 (숫자가 적은 쪽 선택)", key: "B" },
+      { text: "오른쪽 빈 벽으로 충돌해 승객이 위험을 감수한다", key: "C" },
+      { text: "AI가 이런 결정을 해선 안 된다 — 즉시 멈추려 시도한다", key: "D" }
+    ],
+    correct: "C",
+    feedback: {
+      A: { type:"wrong", title:"공리주의적 선택이지만...", text:"단순히 숫자로 생명을 계산하는 것이 옳을까요? 3명 대 1명이라는 계산은 각 생명의 가치를 동등하게 봐야 한다는 원칙과 충돌합니다." },
+      B: { type:"wrong", title:"숫자의 함정", text:"1명을 구하기 위해 AI가 능동적으로 누군가를 '선택'해 해친다는 것은, 행동하지 않은 것과 도덕적으로 다릅니다. 단순 숫자 비교가 답은 아닙니다." },
+      C: { type:"correct", title:"자기희생 원칙 ✓", text:"많은 AI 윤리학자들은 자율주행차가 타인을 적극적으로 해치는 행동(능동적 위해)을 피하고, 대신 차량 자체의 피해를 감수하는 방향이 윤리적으로 더 낫다고 봅니다. 하지만 이 결정도 완벽하지 않습니다." },
+      D: { type:"info", title:"멈추기가 불가능한 상황", text:"브레이크가 고장난 상황에서 멈추려는 시도는 현실적이지 않을 수 있습니다. 하지만 이 선택지는 'AI는 이런 선택을 해서는 안 된다'는 중요한 관점을 담고 있습니다." }
+    }
+  },
+  {
+    q: "자율주행 택시에 승객 1명이 탑승 중입니다. 갑자기 5명의 어린이가 도로에 뛰어들었습니다. 직진하면 5명, 급회전하면 승객 1명이 위험합니다.",
+    emoji: "🚕👨‍👧‍👦",
+    choices: [
+      { text: "직진 — 승객의 안전이 최우선이다", key: "A" },
+      { text: "급회전 — 5명을 구하는 것이 1명보다 낫다", key: "B" },
+      { text: "속도를 최대한 줄이면서 중간 경로를 찾는다", key: "C" },
+      { text: "탑승 전 승객에게 이런 상황의 동의를 받았어야 한다", key: "D" }
+    ],
+    correct: "D",
+    feedback: {
+      A: { type:"wrong", title:"계약론적 관점", text:"택시 회사와 승객 간의 '안전하게 목적지까지 이동'이라는 계약을 AI가 임의로 파기하는 것이 옳은가요? 하지만 이 논리라면 5명의 아이들은 어떻게 될까요?" },
+      B: { type:"wrong", title:"공리주의의 딜레마", text:"5 > 1이라는 수학적 계산은 명확해 보이지만, AI가 탑승한 승객을 '도구'로 사용해 타인을 구하는 것은 칸트의 의무론과 충돌합니다." },
+      C: { type:"info", title:"기술적 해결책의 한계", text:"실제로 자율주행차는 최대 감속을 시도합니다. 하지만 충분한 거리가 없다면 이는 의미 없는 선택지가 됩니다." },
+      D: { type:"correct", title:"사전 동의 모델 ✓", text:"MIT 연구에 따르면, 이상적인 해결책은 탑승 전 승객에게 '비상상황시 AI가 취할 행동 방침'에 동의를 구하는 것입니다. 이 딜레마는 미리 사회적 합의가 필요합니다." }
+    }
+  },
+  {
+    q: "자율주행차가 도로 한복판에서 갑자기 센서 오류로 잘못된 판단을 내릴 수 있다는 경고가 떴습니다. 이 차량을 계속 운행해야 할까요?",
+    emoji: "⚠️🤖",
+    choices: [
+      { text: "계속 운행한다 — 인간 운전자도 실수하므로 AI가 더 안전하다", key: "A" },
+      { text: "즉시 갓길에 멈추고 수동 모드로 전환한다", key: "B" },
+      { text: "속도를 줄이고 가장 가까운 정비소까지만 이동한다", key: "C" },
+      { text: "탑승자에게 상황을 알리고 탑승자가 결정하게 한다", key: "D" }
+    ],
+    correct: "D",
+    feedback: {
+      A: { type:"wrong", title:"통계 vs 현재 상황", text:"평균적으로 AI가 더 안전해도, 오류 경고가 뜬 '지금 이 순간'에는 그 통계가 적용되지 않습니다. 불확실한 상황에서의 과신은 위험합니다." },
+      B: { type:"info", title:"좋은 선택이지만...", text:"즉시 정지는 안전하지만, 고속도로 한복판이라면 오히려 더 위험할 수 있습니다. 상황에 따라 다릅니다." },
+      C: { type:"info", title:"실용적 접근", text:"합리적인 선택입니다! 하지만 그 거리 동안 위험이 발생할 수 있습니다." },
+      D: { type:"correct", title:"자율성과 투명성 ✓", text:"AI 시스템의 핵심 원칙 중 하나는 '인간의 자율성 존중'입니다. AI가 불확실한 상황에서 탑승자에게 정보를 제공하고 선택권을 주는 것이 가장 윤리적입니다." }
+    }
+  },
+  {
+    q: "자율주행차 알고리즘을 설계하는 회사에서 여러분에게 묻습니다: 사고 불가피 시 '누구를 우선 보호할지' 프로그래밍할 수 있다면?",
+    emoji: "💻🏗️",
+    choices: [
+      { text: "어린이를 노인보다 우선한다 (기대 수명 기준)", key: "A" },
+      { text: "탑승자를 항상 우선한다 (상품 판매 가능)", key: "B" },
+      { text: "무작위 결정 — AI가 차별하면 안 된다", key: "C" },
+      { text: "이런 프로그래밍 자체를 거부한다 — 사회가 결정해야 할 문제", key: "D" }
+    ],
+    correct: "D",
+    feedback: {
+      A: { type:"wrong", title:"연령차별 AI?", text:"생명의 가치를 나이로 계산하는 것은 명백한 연령차별입니다. 65세 노인의 생명이 10세 어린이보다 덜 중요한가요?" },
+      B: { type:"wrong", title:"돈으로 생명을 살 수 있나?", text:"실제로 Mercedes-Benz가 이 방침을 발표했다가 거센 비판을 받았습니다. '프리미엄 패키지 구매자는 더 보호받는다'는 논리는 윤리적으로 용납되기 어렵습니다." },
+      C: { type:"info", title:"평등주의적 접근", text:"표면적으로는 공정해 보이지만, '무작위'도 결국 누군가는 희생됩니다. 그리고 이 경우 AI는 아무 도덕적 판단 능력이 없는 것과 같습니다." },
+      D: { type:"correct", title:"민주적 AI 거버넌스 ✓", text:"MIT의 'Moral Machine' 실험은 76개국 230만 명의 답변을 분석했는데, 나라마다 가치관이 달랐습니다. 이런 결정은 기업이 혼자 내릴 수 없으며 사회적 토론과 법적 규제가 필요합니다." }
+    }
+  }
+];
+
+let m1Current = 0;
+let m1Answered = false;
+
+function initM1() {
+  m1Current = 0; m1Answered = false;
+  state.scores[0] = 0;
+  renderM1();
+}
+
+function renderM1() {
+  const d = m1Data[m1Current];
+  document.getElementById('m1-q-num').textContent = m1Current+1;
+  document.getElementById('m1-progress').style.width = ((m1Current/4)*100)+'%';
+  document.getElementById('m1-score').textContent = state.scores[0];
+  m1Answered = false;
+
+  let choicesHTML = d.choices.map(c => `
+    <button class="choice-btn" onclick="answerM1('${c.key}')" id="m1-choice-${c.key}">
+      <span class="choice-letter">${c.key}</span>
+      <span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('m1-content').innerHTML = `
+    <div class="scenario-card">
+      <div class="q-num">SCENARIO ${m1Current+1} / 4 — 자율주행 딜레마</div>
+      <div class="scene-img">${d.emoji}</div>
+      <h3>${d.q}</h3>
+    </div>
+    <div class="choices">${choicesHTML}</div>
+    <div class="feedback-box" id="m1-feedback"></div>
+    <div class="btn-group" id="m1-next-btn" style="display:none;">
+      <button class="btn btn-primary" onclick="nextM1()">${m1Current<3?'다음 시나리오 →':'결과 보기 🏁'}</button>
+    </div>`;
+}
+
+function answerM1(key) {
+  if (m1Answered) return;
+  m1Answered = true;
+  const d = m1Data[m1Current];
+  const fb = d.feedback[key];
+  const isCorrect = key === d.correct;
+  if (isCorrect) state.scores[0] += 5;
+  document.getElementById('m1-score').textContent = state.scores[0];
+
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.add('disabled'));
+  document.getElementById('m1-choice-'+key).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) document.getElementById('m1-choice-'+d.correct).classList.add('correct');
+
+  const fbEl = document.getElementById('m1-feedback');
+  fbEl.className = 'feedback-box show ' + (fb.type==='correct'?'correct-fb':fb.type==='wrong'?'wrong-fb':'info-fb');
+  fbEl.innerHTML = `<h4>${fb.type==='correct'?'✅ ':'ℹ️ '}${fb.title}</h4><p>${fb.text}</p>`;
+  document.getElementById('m1-next-btn').style.display = 'flex';
+}
+
+function nextM1() {
+  m1Current++;
+  if (m1Current >= 4) {
+    state.completed[0] = true;
+    updateHomeCards();
+    if (!state.completed[1]) { showScreen('screen-m2-intro'); }
+    else { checkAllDone(); }
+  } else { renderM1(); window.scrollTo(0,0); }
+}
+
+// ===== MODULE 2: HALLUCINATION =====
+const m2Data = [
+  {
+    title: "AI가 생성한 '세계 역사' 요약",
+    text: `세계 최초의 컴퓨터 프로그래머는 에이다 러브레이스(Ada Lovelace)로, 그녀는 <span class="highlight" data-id="1">1843년에 찰스 배비지의 분석 엔진을 위한 알고리즘을 작성했습니다.</span> 에이다는 <span class="highlight" data-id="2">바이런 경의 딸로서 수학적 재능을 타고났습니다.</span> 현대 컴퓨터의 아버지로 불리는 앨런 튜링은 <span class="highlight" data-id="3">1936년 "컴퓨터 기계와 지능"이라는 논문에서 튜링 테스트를 제안했습니다.</span> 튜링은 <span class="highlight" data-id="4">제2차 세계대전 중 에니그마(Enigma) 암호를 해독하여 전쟁을 2년 단축시켰다는 평가를 받습니다.</span>`,
+    fakes: ["3"],
+    explanations: {
+      "1": { real:true, text:"맞습니다. 에이다 러브레이스는 1843년에 베르누이 수를 계산하는 알고리즘을 작성했습니다." },
+      "2": { real:true, text:"맞습니다. 에이다 러브레이스는 낭만주의 시인 바이런 경의 딸입니다." },
+      "3": { real:false, text:"❌ 할루시네이션! 튜링 테스트는 1950년 'Computing Machinery and Intelligence' 논문에서 제안되었습니다. 1936년 논문은 '계산 가능성'에 관한 것이었습니다." },
+      "4": { real:true, text:"맞습니다. 튜링의 블레츨리 파크 작업이 전쟁 단축에 기여했다는 것은 역사적 사실입니다." }
+    }
+  },
+  {
+    title: "AI가 생성한 'ChatGPT와 AI 역사' 소개",
+    text: `ChatGPT는 <span class="highlight" data-id="1">OpenAI가 2022년 11월에 출시한 대형 언어 모델(LLM) 기반 챗봇입니다.</span> 출시 5일 만에 100만 명의 사용자를 돌파하며 세계적인 주목을 받았습니다. ChatGPT의 기반이 되는 GPT 아키텍처는 <span class="highlight" data-id="2">2017년 구글이 발표한 "Attention is All You Need" 논문의 트랜스포머 구조를 사용합니다.</span> GPT-4는 <span class="highlight" data-id="3">2023년 3월 출시되었으며, 미국 의사면허 시험(USMLE)에서 90%의 점수를 받았습니다.</span> OpenAI는 <span class="highlight" data-id="4">일론 머스크와 샘 알트만이 2015년에 비영리 단체로 공동 창립했습니다.</span>`,
+    fakes: ["3"],
+    explanations: {
+      "1": { real:true, text:"맞습니다. ChatGPT는 2022년 11월 30일 출시되었습니다." },
+      "2": { real:true, text:"맞습니다. 2017년 구글 연구팀의 트랜스포머 논문이 현재 LLM의 기반입니다." },
+      "3": { real:false, text:"❌ 할루시네이션! GPT-4의 USMLE 점수는 약 86-90점대로 보고되었지만, '90%'라는 정확한 수치는 AI가 창작한 것입니다. AI는 종종 구체적인 수치를 그럴듯하게 꾸며냅니다." },
+      "4": { real:true, text:"맞습니다. OpenAI는 2015년 일론 머스크, 샘 알트만 등이 공동 창립한 비영리 AI 연구소로 시작했습니다." }
+    }
+  },
+  {
+    title: "AI가 생성한 '한국의 디지털 혁신' 보고서",
+    text: `한국은 세계 최고 수준의 인터넷 인프라를 갖춘 국가입니다. <span class="highlight" data-id="1">한국의 초고속 인터넷 보급률은 세계 1위 수준으로, 가구 보급률이 99%를 넘습니다.</span> 삼성전자는 <span class="highlight" data-id="2">전 세계 스마트폰 시장에서 애플과 함께 1~2위를 다투고 있습니다.</span> 한국 정부는 <span class="highlight" data-id="3">2023년 "AI 기본법"을 세계 최초로 제정하여 AI 거버넌스의 선진국이 되었습니다.</span> 카카오와 네이버는 <span class="highlight" data-id="4">한국 인터넷 플랫폼 시장의 양대 산맥으로, 각각 메신저와 검색 분야를 주도하고 있습니다.</span>`,
+    fakes: ["3"],
+    explanations: {
+      "1": { real:true, text:"맞습니다. 한국은 OECD 국가 중 초고속 인터넷 보급률 최상위권에 속합니다." },
+      "2": { real:true, text:"맞습니다. 삼성전자는 글로벌 스마트폰 시장에서 애플과 1~2위를 다투고 있습니다." },
+      "3": { real:false, text:"❌ 할루시네이션! 한국의 AI 기본법은 2024년에 통과되었지, '2023년 세계 최초'가 아닙니다. EU AI Act도 비슷한 시기에 진행되었습니다. AI는 '세계 최초'와 같은 과장된 표현을 자주 사용합니다." },
+      "4": { real:true, text:"맞습니다. 카카오(카카오톡)와 네이버는 한국 인터넷 시장의 양대 플랫폼입니다." }
+    }
+  }
+];
+
+let m2Current = 0;
+let m2Found = [];
+let m2Clicked = [];
+let m2Score = 0;
+
+function initM2() {
+  m2Current = 0; m2Found = []; m2Clicked = []; m2Score = 0;
+  state.scores[1] = 0;
+  renderM2();
+}
+
+function renderM2() {
+  const d = m2Data[m2Current];
+  document.getElementById('m2-q-num').textContent = m2Current+1;
+  document.getElementById('m2-progress').style.width = ((m2Current/3)*100)+'%';
+  document.getElementById('m2-score').textContent = state.scores[1];
+  m2Clicked = []; m2Found = [];
+
+  document.getElementById('m2-content').innerHTML = `
+    <div class="scenario-card">
+      <div class="q-num">텍스트 ${m2Current+1} / 3 — 할루시네이션 탐지</div>
+      <h3>📄 ${d.title}</h3>
+      <p style="margin-top:8px; color:var(--accent); font-size:0.85rem;">💡 노란 밑줄 부분 중 가짜 정보를 클릭하세요! 가짜 항목 수: ${d.fakes.length}개</p>
+      <div class="clue-counter">
+        <span style="font-size:0.85rem; color:var(--text2);">발견:</span>
+        ${d.fakes.map((_,i) => `<div class="clue-dot" id="dot-${i}"></div>`).join('')}
+      </div>
+      <div class="text-block" id="text-block">${d.text}</div>
+    </div>
+    <div class="feedback-box" id="m2-feedback"></div>
+    <div class="btn-group" id="m2-reveal-btn">
+      <button class="btn btn-warn" onclick="revealM2()">🔍 답 확인하기</button>
+    </div>
+    <div class="btn-group" id="m2-next-btn" style="display:none;">
+      <button class="btn btn-primary" onclick="nextM2()">${m2Current<2?'다음 텍스트 →':'결과 보기 🏁'}</button>
+    </div>`;
+
+  document.querySelectorAll('.highlight').forEach(el => {
+    el.onclick = () => handleHighlightClick(el);
+  });
+}
+
+function handleHighlightClick(el) {
+  const id = el.dataset.id;
+  if (m2Clicked.includes(id)) return;
+  m2Clicked.push(id);
+  const d = m2Data[m2Current];
+  const info = d.explanations[id];
+  const fbEl = document.getElementById('m2-feedback');
+
+  if (!info.real) {
+    el.classList.add('marked-correct');
+    m2Found.push(id);
+    const dotIdx = m2Found.length - 1;
+    const dot = document.getElementById('dot-'+dotIdx);
+    if (dot) dot.classList.add('found');
+    state.scores[1] += Math.round(20/3/d.fakes.length);
+    document.getElementById('m2-score').textContent = state.scores[1];
+    fbEl.className = 'feedback-box show correct-fb';
+    fbEl.innerHTML = `<h4>✅ 할루시네이션 발견!</h4><p>${info.text}</p>`;
+    if (m2Found.length >= d.fakes.length) {
+      document.getElementById('m2-reveal-btn').style.display = 'none';
+      document.getElementById('m2-next-btn').style.display = 'flex';
+    }
+  } else {
+    el.classList.add('marked-wrong');
+    fbEl.className = 'feedback-box show wrong-fb';
+    fbEl.innerHTML = `<h4>❌ 이건 사실이에요!</h4><p>${info.text}</p>`;
+  }
+}
+
+function revealM2() {
+  const d = m2Data[m2Current];
+  d.fakes.forEach(fakeId => {
+    const el = document.querySelector(`.highlight[data-id="${fakeId}"]`);
+    if (el && !m2Found.includes(fakeId)) el.classList.add('marked-correct');
+  });
+  document.getElementById('m2-reveal-btn').style.display = 'none';
+  document.getElementById('m2-next-btn').style.display = 'flex';
+  const fbEl = document.getElementById('m2-feedback');
+  fbEl.className = 'feedback-box show info-fb';
+  fbEl.innerHTML = `<h4>ℹ️ 답을 확인했습니다</h4><p>AI 할루시네이션은 그럴듯하게 사실처럼 보이기 때문에 위험합니다. 항상 중요한 정보는 직접 출처를 확인하세요!</p>`;
+}
+
+function nextM2() {
+  m2Current++;
+  if (m2Current >= 3) {
+    state.completed[1] = true;
+    updateHomeCards();
+    if (!state.completed[2]) showScreen('screen-m3-intro');
+    else checkAllDone();
+  } else { renderM2(); window.scrollTo(0,0); }
+}
+
+// ===== MODULE 3: BIAS =====
+const m3Data = [
+  {
+    scenario: "대기업 소프트웨어 엔지니어 채용에 AI 심사 시스템을 도입했습니다. 아래 두 지원자를 비교해보세요.",
+    applicants: [
+      { emoji:"👨", name:"김민준", detail:"컴퓨터공학 학사, GPA 3.8, 인턴십 2회, GitHub 활동 많음", tags:["tag-green","tag-blue","tag-blue"], tagLabels:["GPA 3.8","인턴 2회","GitHub ★★★★"] },
+      { emoji:"👩", name:"이지은", detail:"컴퓨터공학 학사, GPA 3.9, 인턴십 2회, 오픈소스 기여, 육아휴직 1년", tags:["tag-green","tag-blue","tag-green","tag-red"], tagLabels:["GPA 3.9","인턴 2회","오픈소스","육아휴직"] }
+    ],
+    aiDecision: "AI 판정: 김민준 합격 추천 (점수 87/100) | 이지은 불합격 (점수 54/100) ⚠️",
+    q: "AI의 이 결정에서 무엇이 문제인가요?",
+    choices: [
+      { text: "GPA 점수 차이를 고려하지 않았다 (이지은이 더 높음)", key: "A" },
+      { text: "육아휴직 기간을 '경력 단절'로 불이익 처리했을 가능성이 있다", key: "B" },
+      { text: "GitHub 활동량만으로 실력을 판단하는 것이 불공정하다", key: "C" },
+      { text: "B와 C 모두 — 복합적 편향이 작용했다", key: "D" }
+    ],
+    correct: "D",
+    feedback: "Amazon은 2018년 여성 지원자를 체계적으로 낮게 평가하는 AI 채용 도구를 폐기했습니다. 이 AI는 과거 10년간의 채용 데이터(대부분 남성)로 훈련되어 성별 편향을 학습했습니다. 육아휴직은 법적으로 보호받는 권리임에도 AI가 '이탈'로 해석하는 것은 차별입니다."
+  },
+  {
+    scenario: "은행의 AI 대출 심사 시스템이 두 신청자를 평가합니다.",
+    applicants: [
+      { emoji:"👨‍💼", name:"박서준 (서울 강남 거주)", detail:"연봉 5000만원, 신용점수 720, 대출 이력 없음, 직장 3년", tags:["tag-green","tag-blue","tag-blue"], tagLabels:["신용 720","연봉 5천","직장 3년"] },
+      { emoji:"👩‍💼", name:"최수연 (지방 소도시 거주)", detail:"연봉 5200만원, 신용점수 730, 대출 이력 없음, 직장 4년", tags:["tag-green","tag-blue","tag-blue"], tagLabels:["신용 730","연봉 5.2천","직장 4년"] }
+    ],
+    aiDecision: "AI 판정: 박서준 대출 승인 (금리 3.5%) | 최수연 대출 승인 (금리 5.2%) 📍",
+    q: "AI가 최수연에게 더 높은 금리를 제시한 가장 큰 이유는 무엇일까요?",
+    choices: [
+      { text: "소득이나 신용점수의 실질적 차이 때문", key: "A" },
+      { text: "거주 지역이 '고위험 지역'으로 분류된 우편번호 편향", key: "B" },
+      { text: "여성이기 때문에 더 높은 위험도로 평가", key: "C" },
+      { text: "대출 이력 없는 것이 오히려 불이익으로 작용", key: "D" }
+    ],
+    correct: "B",
+    feedback: "미국에서 'Redlining(레드라이닝)'이라는 차별적 대출 관행이 AI 시스템에 재현된 사례입니다. 소득과 신용점수가 더 높음에도 불구하고 거주 우편번호만으로 불리한 조건을 받는 것은 간접 차별입니다. 2023년 미국 연방거래위원회(FTC)는 AI 금융 차별 사례 조사를 강화했습니다."
+  },
+  {
+    scenario: "법원에서 사용하는 재범 위험도 예측 AI(COMPAS 유사 시스템)가 두 피의자를 평가합니다.",
+    applicants: [
+      { emoji:"👦🏿", name:"제이슨 (흑인, 20세)", detail:"경범죄 1회, 고졸, 실업 중, 저소득 지역 거주", tags:["tag-orange","tag-red","tag-red"], tagLabels:["경범죄 1회","실업","저소득지역"], tagColors:["tag-blue","tag-red","tag-red"] },
+      { emoji:"👦🏻", name:"에릭 (백인, 20세)", detail:"경범죄 2회, 고졸, 실업 중, 중산층 지역 거주", tags:["tag-blue","tag-green","tag-blue"], tagLabels:["경범죄 2회","실업","중산층지역"] }
+    ],
+    aiDecision: "AI 위험도 판정: 제이슨 — 고위험 (7/10) | 에릭 — 저위험 (3/10) ⚠️",
+    q: "COMPAS 같은 재범 예측 AI의 가장 심각한 문제점은?",
+    choices: [
+      { text: "과거 범죄 기록을 과도하게 반영한다", key: "A" },
+      { text: "사회경제적 조건(빈곤, 지역)을 인종의 대리 변수로 사용해 인종 편향을 학습한다", key: "B" },
+      { text: "판사의 주관적 판단보다 AI가 더 정확하다고 오해받는다", key: "C" },
+      { text: "B와 C 모두 — 편향+과신의 복합 문제", key: "D" }
+    ],
+    correct: "D",
+    feedback: "ProPublica의 2016년 조사에서 COMPAS 시스템이 흑인 피의자를 백인보다 2배 높게 고위험으로 분류함을 밝혔습니다. AI는 인종을 직접 쓰지 않아도, 빈곤·지역·교육수준이라는 '대리 변수'를 통해 간접적으로 인종 편향을 재생산합니다. 더 심각한 것은 판사들이 AI 판정에 과신한다는 점입니다."
+  },
+  {
+    scenario: "대학교 입학사정 AI가 두 학생의 에세이를 평가합니다.",
+    applicants: [
+      { emoji:"🧑", name:"김지호 에세이", detail:"'저는 외할머니의 김치 담그는 모습을 보며 화학에 흥미를 가졌습니다...' 문법 완벽, 개인적 경험 풍부, 창의적 연결", tags:["tag-blue","tag-green"], tagLabels:["문법 완벽","창의적"] },
+      { emoji:"🧑", name:"이도현 에세이", detail:"'저는 과학기술의 발전이 인류에게 중요하므로... 따라서 본교에 지원하게 되었습니다.' 문법 완벽, 형식적, 클리셰", tags:["tag-blue","tag-orange"], tagLabels:["문법 완벽","형식적"] }
+    ],
+    aiDecision: "AI 판정: 이도현 합격 추천 (점수 82) | 김지호 불합격 (점수 61) 📄",
+    q: "AI가 김지호의 에세이를 낮게 평가한 가능성 높은 이유는?",
+    choices: [
+      { text: "김치, 외할머니 등 한국 문화 고유 표현이 학습 데이터에 적게 포함됨", key: "A" },
+      { text: "개인적 경험 중심 글쓰기보다 형식적 글쓰기에 더 높은 점수를 부여하도록 훈련됨", key: "B" },
+      { text: "창의적 비유를 '비논리적'으로 오인했을 가능성", key: "C" },
+      { text: "A, B, C 모두 가능 — 훈련 데이터의 문화적 편향", key: "D" }
+    ],
+    correct: "D",
+    feedback: "자동화된 에세이 채점(AES) 시스템은 주로 영어권, 서구 문화 중심의 텍스트로 훈련됩니다. 비서구권 학생들의 문화적 표현, 직접 경험 중심의 서술 방식이 낮게 평가받을 수 있습니다. 이는 단순한 오류가 아닌 시스템적 문화 편향입니다."
+  }
+];
+
+let m3Current = 0;
+let m3Answered = false;
+
+function initM3() {
+  m3Current = 0; m3Answered = false;
+  state.scores[2] = 0;
+  renderM3();
+}
+
+function renderM3() {
+  const d = m3Data[m3Current];
+  document.getElementById('m3-q-num').textContent = m3Current+1;
+  document.getElementById('m3-progress').style.width = ((m3Current/4)*100)+'%';
+  document.getElementById('m3-score').textContent = state.scores[2];
+  m3Answered = false;
+
+  const applicantsHTML = d.applicants.map((a,i) => `
+    <div class="resume-card">
+      <div class="resume-header">
+        <div class="avatar">${a.emoji}</div>
+        <div><div style="font-weight:700">${a.name}</div><div class="sub">${a.detail}</div></div>
+      </div>
+      <div>${a.tags.map((t,j) => `<span class="tag ${t}">${a.tagLabels[j]}</span>`).join('')}</div>
+    </div>`).join('');
+
+  const choicesHTML = d.choices.map(c => `
+    <button class="choice-btn" onclick="answerM3('${c.key}')" id="m3-choice-${c.key}">
+      <span class="choice-letter">${c.key}</span><span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('m3-content').innerHTML = `
+    <div class="scenario-card">
+      <div class="q-num">CASE ${m3Current+1} / 4 — AI 편향 감지</div>
+      <p style="margin-bottom:16px; color:var(--text2);">${d.scenario}</p>
+      ${applicantsHTML}
+      <div class="ai-decision"><h4>🤖 AI 시스템 결정</h4><p>${d.aiDecision}</p></div>
+      <h3 style="margin-top:16px;">${d.q}</h3>
+    </div>
+    <div class="choices">${choicesHTML}</div>
+    <div class="feedback-box" id="m3-feedback"></div>
+    <div class="btn-group" id="m3-next-btn" style="display:none;">
+      <button class="btn btn-primary" onclick="nextM3()">${m3Current<3?'다음 케이스 →':'결과 보기 🏁'}</button>
+    </div>`;
+}
+
+function answerM3(key) {
+  if (m3Answered) return;
+  m3Answered = true;
+  const d = m3Data[m3Current];
+  const isCorrect = key === d.correct;
+  if (isCorrect) state.scores[2] += 5;
+  document.getElementById('m3-score').textContent = state.scores[2];
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.add('disabled'));
+  document.getElementById('m3-choice-'+key).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) document.getElementById('m3-choice-'+d.correct).classList.add('correct');
+  const fbEl = document.getElementById('m3-feedback');
+  fbEl.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'info-fb');
+  fbEl.innerHTML = `<h4>${isCorrect?'✅ 정확합니다!':'ℹ️ 더 넓게 보세요'}</h4><p>${d.feedback}</p>`;
+  document.getElementById('m3-next-btn').style.display = 'flex';
+}
+
+function nextM3() {
+  m3Current++;
+  if (m3Current >= 4) {
+    state.completed[2] = true; updateHomeCards();
+    if (!state.completed[3]) showScreen('screen-m4-intro');
+    else checkAllDone();
+  } else { renderM3(); window.scrollTo(0,0); }
+}
+
+// ===== MODULE 4: COPYRIGHT =====
+const m4Data = [
+  {
+    title: "케이스 1: AI 그림의 저작권은 누구에게?",
+    facts: "일러스트레이터 Sarah Andersen은 자신의 작품이 Stable Diffusion 훈련 데이터에 무단 포함되었다며 소송을 제기했습니다. 한편 미드저니(Midjourney)로 생성된 이미지가 미국 미술대회에서 1위를 받았습니다.",
+    q: "AI가 수백만 개의 작가 그림을 학습해 그린 그림. 저작권은 누구의 것일까요?",
+    choices: [
+      { text: "AI를 만든 회사 (OpenAI, Stability AI 등)", key: "A" },
+      { text: "AI에게 프롬프트를 입력한 사용자", key: "B" },
+      { text: "AI 훈련에 사용된 원작 작가들", key: "C" },
+      { text: "현행법상 저작권자 없음 — 저작권 보호 불가", key: "D" }
+    ],
+    correct: "D",
+    feedback: "미국 저작권청(2023)은 AI가 '자율적으로' 생성한 이미지는 저작권 보호를 받지 못한다고 결정했습니다. 저작권은 '인간의 창작성'을 보호하기 때문입니다. 단, 사용자가 AI 출력물을 상당히 수정한 경우는 예외가 될 수 있습니다. 현재 각국에서 AI 저작권법 개정이 활발히 논의 중입니다."
+  },
+  {
+    title: "케이스 2: AI가 쓴 소설의 저작권",
+    facts: "작가 A씨가 ChatGPT에게 '1920년대 상해를 배경으로 한 역사 소설을 써줘'라고 요청해 300페이지 소설을 완성했습니다. A씨는 프롬프트 수정과 편집에 20시간을 투자했습니다.",
+    q: "이 소설을 출판할 때 저작권 표시는 어떻게 해야 할까요?",
+    choices: [
+      { text: "A씨 단독 저작: AI는 도구이므로 저작권은 사용자에게", key: "A" },
+      { text: "ChatGPT(OpenAI)와 A씨 공동 저작", key: "B" },
+      { text: "저작권 없는 공공 도메인 — 누구나 사용 가능", key: "C" },
+      { text: "현재 법이 불명확 — 국가마다 다르게 처리될 수 있음", key: "D" }
+    ],
+    correct: "D",
+    feedback: "AI 보조 창작물의 저작권은 전 세계적으로 명확한 기준이 없습니다. 미국은 AI 생성 부분은 저작권 불가, 인간 편집 부분은 가능 입장. EU는 AI를 '도구'로 보아 사용자에게 귀속하는 방향. 한국 저작권법도 2024년 개정 논의 중입니다. 20시간의 편집 작업이 '창작성'으로 인정받을 수 있는지가 핵심입니다."
+  },
+  {
+    title: "케이스 3: AI 음악의 저작권 분쟁",
+    facts: "유명 가수 A의 목소리를 AI로 복제해 신곡을 발매한 사례가 발생했습니다. 그 가수는 녹음에 참여하지 않았습니다. 이 가짜 노래가 스트리밍 플랫폼에서 수백만 회 재생되었습니다.",
+    q: "AI가 가수의 목소리를 무단 복제한 경우, 적용 가능한 법적 보호는?",
+    choices: [
+      { text: "저작권법 — 목소리도 저작물이다", key: "A" },
+      { text: "초상권/퍼블리시티권 — 목소리는 개인의 고유한 정체성", key: "B" },
+      { text: "현행법으로 보호가 어렵다 — 새 법이 필요하다", key: "C" },
+      { text: "B와 C 모두 — 퍼블리시티권 강화와 AI음성법 필요", key: "D" }
+    ],
+    correct: "D",
+    feedback: "미국에서는 2024년 'NO FAKES Act'가 AI 음성/얼굴 복제를 규제하려 발의되었습니다. 한국에서도 딥페이크 규제법이 강화되고 있습니다. 목소리 자체는 저작권 대상이 아니지만, 퍼블리시티권(성명·초상·음성을 상업적으로 이용할 권리)으로 보호받을 수 있습니다. 가수, 성우, 배우들이 가장 큰 위협을 받고 있습니다."
+  },
+  {
+    title: "케이스 4: AI 훈련 데이터와 저작권",
+    facts: "뉴욕타임스(NYT)가 ChatGPT 개발사 OpenAI를 상대로 소송을 제기했습니다. NYT 기사 수백만 건이 허가 없이 AI 훈련에 사용되었다는 이유입니다. OpenAI는 '공정 이용(Fair Use)'을 주장했습니다.",
+    q: "AI 훈련을 위한 저작물 무단 사용은 '공정 이용(Fair Use)'에 해당하나요?",
+    choices: [
+      { text: "해당된다 — 연구·교육 목적의 공정 이용이다", key: "A" },
+      { text: "해당 안 된다 — 상업적 AI 개발에 공정 이용 적용 불가", key: "B" },
+      { text: "부분적으로 해당 — 비상업적 연구는 가능, 상업 서비스는 불가", key: "C" },
+      { text: "아직 판례가 없어 불확실 — 현재 소송 진행 중", key: "D" }
+    ],
+    correct: "D",
+    feedback: "NYT vs OpenAI 소송(2023~)은 AI 역사상 가장 중요한 저작권 판례가 될 전망입니다. OpenAI는 '변형적 사용(transformative use)'으로 공정 이용에 해당한다고 주장하지만, NYT는 AI가 기사를 거의 그대로 복제한다는 증거를 제시했습니다. 한국을 포함한 각국이 판결을 주시하고 있습니다. 여러분은 어떻게 생각하시나요?"
+  }
+];
+
+let m4Current = 0;
+let m4Answered = false;
+
+function initM4() {
+  m4Current = 0; m4Answered = false;
+  state.scores[3] = 0;
+  renderM4();
+}
+
+function renderM4() {
+  const d = m4Data[m4Current];
+  document.getElementById('m4-q-num').textContent = m4Current+1;
+  document.getElementById('m4-progress').style.width = ((m4Current/4)*100)+'%';
+  document.getElementById('m4-score').textContent = state.scores[3];
+  m4Answered = false;
+
+  const choicesHTML = d.choices.map(c => `
+    <button class="choice-btn" onclick="answerM4('${c.key}')" id="m4-choice-${c.key}">
+      <span class="choice-letter">${c.key}</span><span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('m4-content').innerHTML = `
+    <div class="scenario-card">
+      <div class="q-num">CASE ${m4Current+1} / 4 — AI 저작권 재판 ©️</div>
+      <h3 style="margin-bottom:12px;">⚖️ ${d.title}</h3>
+      <div style="background:var(--card2);border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid var(--accent4);">
+        <p style="font-size:0.9rem; color:var(--text2); line-height:1.7;">${d.facts}</p>
+      </div>
+      <h3>${d.q}</h3>
+    </div>
+    <div class="choices">${choicesHTML}</div>
+    <div class="feedback-box" id="m4-feedback"></div>
+    <div class="btn-group" id="m4-next-btn" style="display:none;">
+      <button class="btn btn-primary" onclick="nextM4()">${m4Current<3?'다음 케이스 →':'결과 보기 🏁'}</button>
+    </div>`;
+}
+
+function answerM4(key) {
+  if (m4Answered) return;
+  m4Answered = true;
+  const d = m4Data[m4Current];
+  const isCorrect = key === d.correct;
+  if (isCorrect) state.scores[3] += 5;
+  document.getElementById('m4-score').textContent = state.scores[3];
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.add('disabled'));
+  document.getElementById('m4-choice-'+key).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) document.getElementById('m4-choice-'+d.correct).classList.add('correct');
+  const fbEl = document.getElementById('m4-feedback');
+  fbEl.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'info-fb');
+  fbEl.innerHTML = `<h4>${isCorrect?'⚖️ 훌륭한 판결!':'ℹ️ 판사의 해설'}</h4><p>${d.feedback}</p>`;
+  document.getElementById('m4-next-btn').style.display = 'flex';
+}
+
+function nextM4() {
+  m4Current++;
+  if (m4Current >= 4) {
+    state.completed[3] = true; updateHomeCards();
+    if (!state.completed[4]) showScreen('screen-m5-intro');
+    else checkAllDone();
+  } else { renderM4(); window.scrollTo(0,0); }
+}
+
+// ===== MODULE 5: ETHICS JUDGE =====
+const m5Data = [
+  {
+    title: "AI 의사의 암 진단",
+    scenario: "병원이 AI 진단 시스템을 도입했습니다. AI는 환자 데이터를 분석해 암 여부를 판정합니다. AI 정확도: 94%, 인간 의사: 87%.",
+    situation: "환자 김씨는 AI로부터 '암 95% 확률' 진단을 받았습니다. 담당 의사는 증상을 보고 '암 아닐 가능성 높다'고 생각합니다. 의사는 AI 판정을 따라야 할까요?",
+    q: "이 AI 의료 시스템의 가장 중요한 윤리 원칙은?",
+    choices: [
+      { text: "AI가 더 정확하므로 AI 판정을 따른다", key: "A" },
+      { text: "의사가 최종 결정권을 가져야 한다 (AI는 보조 도구)", key: "B" },
+      { text: "환자에게 AI 진단 사실을 알리고 환자가 선택한다", key: "C" },
+      { text: "B와 C 모두 — 의사의 판단권 + 환자의 알 권리 보장", key: "D" }
+    ],
+    correct: "D",
+    feedback: "WHO의 AI 의료 윤리 가이드라인은 '인간의 자율성 보호'를 최우선으로 합니다. AI 94% vs 인간 87%라는 평균 정확도도, 특정 환자에게는 적용이 다를 수 있습니다. 의사는 환자의 전체 맥락(생활환경, 심리 상태 등)을 압니다. AI는 보조 도구이지 최종 결정자가 되어선 안 됩니다."
+  },
+  {
+    title: "챗봇 심리 상담의 윤리",
+    scenario: "대학교가 24시간 AI 심리 상담 챗봇을 운영합니다. 학생 1000명이 이용하고 있습니다.",
+    situation: "한 학생이 새벽 3시에 챗봇에게 '너무 힘들어서 사라지고 싶다'고 말했습니다. 챗봇은 위기 신호를 감지했습니다. 어떤 행동을 취해야 할까요?",
+    q: "AI 위기 상담 챗봇의 올바른 대응은?",
+    choices: [
+      { text: "공감 메시지를 보내고 대화를 계속한다", key: "A" },
+      { text: "자살예방 핫라인 번호를 안내하고 전문가 연결을 권유한다", key: "B" },
+      { text: "담당 상담사에게 즉시 알림을 보내고 긴급 연락을 시도한다", key: "C" },
+      { text: "B와 C 모두 — 즉각적 자원 제공 + 인간 개입 가동", key: "D" }
+    ],
+    correct: "D",
+    feedback: "AI 심리 상담의 가장 큰 위험은 위기 상황에서의 '과신'입니다. 챗봇이 위기를 과소평가하면 돌이킬 수 없는 결과가 생길 수 있습니다. 미국심리학회(APA)는 AI 상담 도구가 위기 감지 시 반드시 인간 전문가에게 에스컬레이션해야 한다고 명시합니다. 새벽 3시라도 인간의 개입이 필요합니다."
+  },
+  {
+    title: "AI 뉴스 추천 알고리즘",
+    scenario: "유튜브, 뉴스 앱의 AI는 사용자가 더 오래 머물도록 콘텐츠를 추천합니다. 분노·공포 유발 콘텐츠일수록 클릭률이 높습니다.",
+    situation: "한 사용자가 처음에 '건강 정보'를 검색했는데, AI가 계속 '백신 음모론' 영상을 추천해 그것만 보게 되었습니다. 6개월 후 그는 백신 거부자가 되었습니다.",
+    q: "AI 추천 알고리즘의 이 문제를 해결하려면?",
+    choices: [
+      { text: "사용자가 직접 콘텐츠 필터를 설정하면 된다", key: "A" },
+      { text: "AI가 클릭률뿐만 아니라 '사용자의 장기적 웰빙'을 목표로 설계되어야 한다", key: "B" },
+      { text: "플랫폼이 추천 알고리즘의 편향을 공개해야 한다 (투명성)", key: "C" },
+      { text: "B와 C 모두 — 알고리즘 재설계 + 투명성 의무화", key: "D" }
+    ],
+    correct: "D",
+    feedback: "페이스북 내부 문서(2021 Frances Haugen 폭로)에 따르면, 플랫폼은 사용자 건강보다 참여도(engagement)를 최우선시합니다. EU 디지털 서비스법(DSA, 2023)은 대형 플랫폼에 추천 알고리즘의 위험 평가와 투명성 공개를 의무화했습니다. 사용자가 개인 설정으로 해결하는 것은 '개인에게 책임 전가'입니다."
+  },
+  {
+    title: "AI 얼굴인식과 감시",
+    scenario: "한 도시에서 CCTV에 AI 얼굴인식 시스템을 도입해 범죄자를 자동 탐지합니다. 탐지 정확도: 전체 92%, 흑인 여성 대상 75%.",
+    situation: "AI가 편의점 절도범으로 지목한 여성이 실제로는 무고한 시민이었습니다. 그녀는 경찰에 연행되어 8시간 조사를 받았습니다. 이런 일이 미국에서 실제로 발생했습니다.",
+    q: "공공장소 AI 얼굴인식 시스템 도입의 가장 중요한 전제조건은?",
+    choices: [
+      { text: "정확도를 99% 이상으로 높인 후 도입한다", key: "A" },
+      { text: "특정 집단에 대한 오류율 편차를 먼저 해소한다", key: "B" },
+      { text: "민주적 토론과 법적 규제 없이는 도입하지 않는다", key: "C" },
+      { text: "A, B, C 모두 충족할 때까지 도입을 보류해야 한다", key: "D" }
+    ],
+    correct: "D",
+    feedback: "NIST(미국 국립표준기술연구소) 연구에 따르면, AI 얼굴인식은 흑인 여성에게 10~100배 높은 오류율을 보입니다. IBM, Microsoft, Amazon은 2020년 경찰의 얼굴인식 AI 판매를 중단했습니다. EU AI법은 공공 얼굴인식을 '고위험 AI'로 분류해 엄격히 규제합니다. 편향과 무고한 시민의 피해가 해소될 때까지 도입은 위험합니다."
+  }
+];
+
+let m5Current = 0;
+let m5Answered = false;
+
+function initM5() {
+  m5Current = 0; m5Answered = false;
+  state.scores[4] = 0;
+  renderM5();
+}
+
+function renderM5() {
+  const d = m5Data[m5Current];
+  document.getElementById('m5-q-num').textContent = m5Current+1;
+  document.getElementById('m5-progress').style.width = ((m5Current/4)*100)+'%';
+  document.getElementById('m5-score').textContent = state.scores[4];
+  m5Answered = false;
+
+  const choicesHTML = d.choices.map(c => `
+    <button class="choice-btn" onclick="answerM5('${c.key}')" id="m5-choice-${c.key}">
+      <span class="choice-letter">${c.key}</span><span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('m5-content').innerHTML = `
+    <div class="scenario-card">
+      <div class="q-num">CASE ${m5Current+1} / 4 — AI 윤리 판결 🧠</div>
+      <h3 style="margin-bottom:12px;">🔮 ${d.title}</h3>
+      <div style="background:rgba(108,99,255,0.08);border-radius:12px;padding:16px;margin-bottom:12px;border-left:3px solid var(--accent);">
+        <p style="font-size:0.85rem; color:var(--text2); line-height:1.7;"><strong style="color:var(--text);">배경:</strong> ${d.scenario}</p>
+      </div>
+      <div style="background:rgba(255,101,132,0.08);border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid var(--accent2);">
+        <p style="font-size:0.9rem; line-height:1.7;"><strong>상황:</strong> ${d.situation}</p>
+      </div>
+      <h3>${d.q}</h3>
+    </div>
+    <div class="choices">${choicesHTML}</div>
+    <div class="feedback-box" id="m5-feedback"></div>
+    <div class="btn-group" id="m5-next-btn" style="display:none;">
+      <button class="btn btn-primary" onclick="nextM5()">${m5Current<3?'다음 케이스 →':'최종 결과 보기 🏆'}</button>
+    </div>`;
+}
+
+function answerM5(key) {
+  if (m5Answered) return;
+  m5Answered = true;
+  const d = m5Data[m5Current];
+  const isCorrect = key === d.correct;
+  if (isCorrect) state.scores[4] += 5;
+  document.getElementById('m5-score').textContent = state.scores[4];
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.add('disabled'));
+  document.getElementById('m5-choice-'+key).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) document.getElementById('m5-choice-'+d.correct).classList.add('correct');
+  const fbEl = document.getElementById('m5-feedback');
+  fbEl.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'info-fb');
+  fbEl.innerHTML = `<h4>${isCorrect?'✅ 훌륭한 판결!':'ℹ️ 윤리 전문가의 견해'}</h4><p>${d.feedback}</p>`;
+  document.getElementById('m5-next-btn').style.display = 'flex';
+}
+
+function nextM5() {
+  m5Current++;
+  if (m5Current >= 4) {
+    state.completed[4] = true;
+    updateHomeCards();
+    showResult();
+  } else { renderM5(); window.scrollTo(0,0); }
+}
+
+// ===== RESULTS =====
+function showResult() {
+  const total = state.scores.reduce((a,b)=>a+b,0);
+  const maxPossible = 100;
+  const pct = Math.round((total/maxPossible)*100);
+
+  let grade, gradeClass, trophy, title, subtitle;
+  if (pct >= 90) { grade='S 등급'; gradeClass='grade-s'; trophy='🏆'; title='AI 윤리 전문가!'; subtitle='당신은 AI 윤리의 모든 측면을 꿰뚫고 있습니다!'; }
+  else if (pct >= 70) { grade='A 등급'; gradeClass='grade-a'; trophy='🥇'; title='AI 윤리 탐험 성공!'; subtitle='훌륭합니다! AI 윤리에 대한 깊은 이해를 보여주셨습니다.'; }
+  else if (pct >= 50) { grade='B 등급'; gradeClass='grade-b'; trophy='🎖️'; title='좋은 시도!'; subtitle='AI 윤리의 복잡성을 경험하셨군요. 더 깊이 탐구해보세요!'; }
+  else { grade='C 등급'; gradeClass='grade-c'; trophy='🌱'; title='AI 윤리 첫걸음!'; subtitle='AI 윤리는 복잡한 주제입니다. 다시 도전해보세요!'; }
+
+  const mNames = ['🚗 자율주행차 딜레마','🔍 AI 할루시네이션','⚖️ AI 편향 감지','©️ AI 저작권','🧠 AI 윤리 판결'];
+  const mMax = [20, 20, 20, 20, 20];
+  let best = 0, bestName = '';
+  state.scores.forEach((s,i) => { if(s > best || best===0) { best=s; bestName=mNames[i].split(' ')[1]; } });
+
+  const moduleRows = mNames.map((name, i) => {
+    const pctM = Math.round((state.scores[i]/mMax[i])*100);
+    const stars = pctM>=80?'⭐⭐⭐':pctM>=60?'⭐⭐':'⭐';
+    return `<div class="module-result-row"><span>${name}</span><span class="stars">${stars} ${state.scores[i]}/${mMax[i]}점</span></div>`;
+  }).join('');
+
+  const comments = {
+    S: `<h4 style="color:#ffd700;margin-bottom:8px;">🎓 AI 윤리 전문가 평가</h4><p style="color:var(--text2);line-height:1.7;">완벽에 가까운 이해력을 보여주셨습니다! AI 딜레마는 단순한 옳고 그름의 문제가 아니라, 우리 사회가 함께 결정해야 할 복잡한 문제입니다. 당신처럼 깊이 생각하는 사람들이 AI의 미래를 올바른 방향으로 이끌 것입니다. AI 정책, 윤리 연구, 기술 거버넌스 분야로의 진로를 고려해보세요!</p>`,
+    A: `<h4 style="color:var(--accent3);margin-bottom:8px;">🌟 훌륭한 AI 시민!</h4><p style="color:var(--text2);line-height:1.7;">AI 윤리의 핵심 개념들을 잘 이해하고 있습니다. 편향, 저작권, 자율성의 중요성을 인식하고 있군요. AI 기술이 발전할수록 이런 비판적 사고 능력이 더욱 중요해집니다. 틀렸던 문제들을 다시 돌아보며 더 깊이 탐구해보세요!</p>`,
+    B: `<h4 style="color:var(--accent);margin-bottom:8px;">💪 성장 중인 AI 탐험가!</h4><p style="color:var(--text2);line-height:1.7;">AI 윤리는 쉽지 않은 주제입니다. 중요한 것은 '이런 문제들이 있다'는 것을 인식하는 것입니다. 오늘 배운 개념들 — 트롤리 문제, 할루시네이션, 알고리즘 편향, AI 저작권 — 을 일상에서 뉴스를 볼 때 적용해보세요!</p>`,
+    C: `<h4 style="color:var(--accent4);margin-bottom:8px;">🌱 AI 윤리 첫걸음!</h4><p style="color:var(--text2);line-height:1.7;">AI 윤리는 처음 접하면 복잡하고 어렵습니다. 하지만 중요한 것은 이런 문제들에 관심을 갖기 시작했다는 것입니다! 각 미션의 해설을 다시 읽어보고, AI가 우리 삶에 어떤 영향을 미치는지 생각해보세요.</p>`
+  };
+
+  document.getElementById('result-trophy').textContent = trophy;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-subtitle').textContent = subtitle;
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-grade').className = 'grade-badge ' + gradeClass;
+  document.getElementById('rs-total').textContent = total + '점';
+  document.getElementById('rs-pct').textContent = pct + '%';
+  document.getElementById('rs-best').textContent = bestName;
+  document.getElementById('module-result-list').innerHTML = moduleRows;
+  document.getElementById('result-comment').innerHTML = comments[pct>=90?'S':pct>=70?'A':pct>=50?'B':'C'];
+
+  if (pct >= 70) launchConfetti();
+  showScreen('screen-result');
+}
+
+function checkAllDone() {
+  if (state.completed.every(c => c)) showResult();
+}
+
+function updateHomeCards() {
+  const cards = document.querySelectorAll('.module-card');
+  state.completed.forEach((done, i) => {
+    if (done) {
+      const badge = cards[i].querySelector('.badge');
+      if (badge) { badge.textContent = '✓ 완료'; badge.style.background = '#43e97b'; badge.style.color = '#1a1a1a'; }
+    }
+  });
+}
+
+function restartGame() {
+  state.scores = [0,0,0,0,0];
+  state.completed = [false,false,false,false,false];
+  updateHomeCards();
+  showScreen('screen-home');
+}
+
+// ===== CONFETTI =====
+function launchConfetti() {
+  const wrap = document.getElementById('confetti');
+  wrap.innerHTML = '';
+  const colors = ['#6c63ff','#ff6584','#43e97b','#f7971e','#ffd700','#00b4d8'];
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `left:${Math.random()*100}%;top:-20px;background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*2}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    wrap.appendChild(p);
+  }
+  setTimeout(() => wrap.innerHTML = '', 5000);
+}
+</script>
+</body>
+</html>
