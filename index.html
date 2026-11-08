@@ -263,11 +263,8 @@
   </div>
 
   <div style="margin-top:32px; text-align:center;">
-    <button class="btn btn-primary pulse" onclick="startModule(1)" style="font-size:1.1rem; padding:16px 40px;">
-      🚀 탐험 시작하기
-    </button>
-    <div id="home-result-btn" style="display:none; margin-top:14px;">
-      <button class="btn btn-warn" onclick="showResult()" style="font-size:0.95rem;">
+    <div style="margin-top:14px;">
+      <button class="btn btn-warn" id="home-result-btn" onclick="showResult()" style="font-size:0.95rem;">
         📊 지금까지 결과 보기
       </button>
     </div>
@@ -1207,10 +1204,6 @@ function updateHomeCards() {
       }
     }
   });
-  if (state.completed.some(c=>c)) {
-    const btn = document.getElementById('home-result-btn');
-    if (btn) btn.style.display = 'block';
-  }
 }
 
 function restartGame() {
@@ -1222,8 +1215,6 @@ function restartGame() {
     if (badge) { badge.textContent = 'Mission '+i; badge.style.background = ''; badge.style.color = ''; }
     if (scoreEl) { scoreEl.style.display = 'none'; scoreEl.innerHTML = ''; }
   }
-  const btn = document.getElementById('home-result-btn');
-  if (btn) btn.style.display = 'none';
   showScreen('screen-home');
 }
 
