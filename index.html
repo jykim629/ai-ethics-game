@@ -381,12 +381,12 @@
   <div class="intro-box">
     <span class="big-icon">🔍🤥</span>
     <h2>Mission 2: AI 할루시네이션 탐지기</h2>
-    <p>AI 챗봇이 사실인 척 거짓 정보를 말하는 "할루시네이션"을 경험해보세요!</p>
+    <p>AI가 쓴 에브리타임 게시글·발표 대본·뉴스·과외 노트 속 가짜 정보를 찾아라! 🕵️</p>
     <div class="rules">
       <ul>
-        <li>AI가 작성한 텍스트 안에 가짜 사실이 숨어있습니다</li>
-        <li>노란색으로 밑줄 그어진 부분을 클릭해서 가짜를 찾으세요</li>
-        <li>각 텍스트마다 1~3개의 할루시네이션이 있습니다</li>
+        <li>📱 에브리타임 게시글, 🎤 발표 대본, 📰 뉴스 요약, 🧑‍🏫 AI 과외 노트 — 4가지 AI 작성 글이 등장해요</li>
+        <li>노란 밑줄 부분 중 가짜 정보(할루시네이션)를 클릭하세요</li>
+        <li>각 글마다 1개의 할루시네이션이 숨어있어요</li>
         <li>총 4개 텍스트, 각 5점 = 최대 20점</li>
       </ul>
     </div>
@@ -673,47 +673,92 @@ function nextM1() {
 // ===== MODULE 2: HALLUCINATION =====
 const m2Data = [
   {
-    title: "AI가 생성한 '세계 역사' 요약",
-    text: `세계 최초의 컴퓨터 프로그래머는 에이다 러브레이스(Ada Lovelace)로, 그녀는 <span class="highlight" data-id="1">1843년에 찰스 배비지의 분석 엔진을 위한 알고리즘을 작성했습니다.</span> 에이다는 <span class="highlight" data-id="2">바이런 경의 딸로서 수학적 재능을 타고났습니다.</span> 현대 컴퓨터의 아버지로 불리는 앨런 튜링은 <span class="highlight" data-id="3">1936년 "컴퓨터 기계와 지능"이라는 논문에서 튜링 테스트를 제안했습니다.</span> 튜링은 <span class="highlight" data-id="4">제2차 세계대전 중 에니그마(Enigma) 암호를 해독하여 전쟁을 2년 단축시켰다는 평가를 받습니다.</span>`,
+    title: "📱 에브리타임 'ChatGPT 꿀팁' 게시글",
+    subtitle: "대학 익명 커뮤니티에서 발견한 ChatGPT 활용 게시글이에요. 사실인 척 적힌 정보 중 가짜를 찾아보세요!",
+    text: `<div style="background:var(--bg2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:var(--text2);">📌 익명 | 👍 좋아요 42 | 💬 댓글 8 · 오늘 09:23</div>
+
+여러분 ChatGPT 제대로 쓰고 있나요? 신입생 여러분을 위해 정리해봤어요!
+
+<span class="highlight" data-id="1">ChatGPT는 2022년 11월에 출시됐고, 불과 5일 만에 사용자 100만 명을 달성했어요.</span> 역대 최단 기간 기록!
+
+<span class="highlight" data-id="2">무료 버전으로도 GPT-4o를 하루에 일정 횟수 사용할 수 있고, 더 쓰려면 Plus($20/월)를 구독하면 돼요.</span>
+
+근데 중요한 것! <span class="highlight" data-id="3">ChatGPT는 구글이 개발한 AI라서 구글 검색과 항상 연동되어 최신 정보를 바로 가져올 수 있어요.</span>
+
+마지막으로, <span class="highlight" data-id="4">AI가 사실처럼 거짓 정보를 말하는 걸 '할루시네이션'이라고 해요.</span> 중요한 건 꼭 직접 확인하세요!`,
     fakes: ["3"],
     explanations: {
-      "1": { real:true, text:"맞습니다. 에이다 러브레이스는 1843년에 베르누이 수를 계산하는 알고리즘을 작성했습니다." },
-      "2": { real:true, text:"맞습니다. 에이다 러브레이스는 낭만주의 시인 바이런 경의 딸입니다." },
-      "3": { real:false, text:"❌ 할루시네이션! 튜링 테스트는 1950년 'Computing Machinery and Intelligence' 논문에서 제안되었습니다. 1936년 논문은 '계산 가능성'에 관한 것이었습니다." },
-      "4": { real:true, text:"맞습니다. 튜링의 블레츨리 파크 작업이 전쟁 단축에 기여했다는 것은 역사적 사실입니다." }
+      "1": { real:true, text:"✅ 맞아요! ChatGPT는 2022년 11월 30일에 출시되었고, 5일 만에 100만 명을 돌파했어요. 넷플릭스가 같은 목표에 3.5년이 걸린 것과 비교하면 엄청난 속도죠!" },
+      "2": { real:true, text:"✅ 맞아요! 현재 무료 계정으로도 GPT-4o를 제한적으로 사용할 수 있고, Plus 구독 시 더 많이 사용 가능해요." },
+      "3": { real:false, text:"❌ 할루시네이션 발견! ChatGPT를 만든 건 구글이 아니라 OpenAI예요! 그리고 기본적으로 구글 검색과 자동 연동되지 않아요. AI는 비슷해 보이는 회사나 서비스를 혼동하는 오류를 자주 범해요." },
+      "4": { real:true, text:"✅ 맞아요! AI 할루시네이션은 AI가 없는 사실을 그럴듯하게 꾸며내는 현상이에요. 방금 ③번이 바로 그 예시였죠!" }
     }
   },
   {
-    title: "AI가 생성한 'ChatGPT와 AI 역사' 소개",
-    text: `ChatGPT는 <span class="highlight" data-id="1">OpenAI가 2022년 11월에 출시한 대형 언어 모델(LLM) 기반 챗봇입니다.</span> 출시 5일 만에 100만 명의 사용자를 돌파하며 세계적인 주목을 받았습니다. ChatGPT의 기반이 되는 GPT 아키텍처는 <span class="highlight" data-id="2">2017년 구글이 발표한 "Attention is All You Need" 논문의 트랜스포머 구조를 사용합니다.</span> GPT-4는 <span class="highlight" data-id="3">2023년 3월 출시되었으며, 미국 의사면허 시험(USMLE)에서 90%의 점수를 받았습니다.</span> OpenAI는 <span class="highlight" data-id="4">일론 머스크와 샘 알트만이 2015년에 비영리 단체로 공동 창립했습니다.</span>`,
-    fakes: ["3"],
+    title: "🎤 AI가 대신 써준 발표 대본: AI의 역사",
+    subtitle: "수업 발표 준비 중에 ChatGPT에게 대본을 써달라고 했어요. 그대로 발표하면 망신당할 수도 있어요!",
+    text: `안녕하세요! 오늘은 현대 AI의 역사에 대해 발표하겠습니다.
+
+현대 AI의 시작은 1956년이에요. <span class="highlight" data-id="1">그 해 미국 다트머스 대학 학술회의에서 '인공지능(Artificial Intelligence)'이라는 용어가 처음 만들어졌습니다.</span>
+
+AI가 세계적으로 주목받은 계기가 있었어요. <span class="highlight" data-id="2">2016년 구글 딥마인드의 AlphaGo가 테니스 세계 챔피언을 꺾으면서 AI 열풍이 시작됐습니다.</span>
+
+그 뒤로도 AI는 계속 발전해서, <span class="highlight" data-id="3">2022년 11월 OpenAI가 출시한 ChatGPT는 2개월 만에 사용자 1억 명을 돌파했습니다.</span>
+
+이런 AI의 핵심 기술인 트랜스포머는 <span class="highlight" data-id="4">2017년 Google 연구팀이 'Attention is All You Need' 논문으로 처음 발표했습니다.</span> 이상입니다!`,
+    fakes: ["2"],
     explanations: {
-      "1": { real:true, text:"맞습니다. ChatGPT는 2022년 11월 30일 출시되었습니다." },
-      "2": { real:true, text:"맞습니다. 2017년 구글 연구팀의 트랜스포머 논문이 현재 LLM의 기반입니다." },
-      "3": { real:false, text:"❌ 할루시네이션! GPT-4의 USMLE 점수는 약 86-90점대로 보고되었지만, '90%'라는 정확한 수치는 AI가 창작한 것입니다. AI는 종종 구체적인 수치를 그럴듯하게 꾸며냅니다." },
-      "4": { real:true, text:"맞습니다. OpenAI는 2015년 일론 머스크, 샘 알트만 등이 공동 창립한 비영리 AI 연구소로 시작했습니다." }
+      "1": { real:true, text:"✅ 맞아요! 1956년 다트머스 회의에서 존 매카시가 '인공지능'이라는 용어를 처음 제안했어요. AI 역사의 공식 출발점이에요." },
+      "2": { real:false, text:"❌ 할루시네이션 발견! AlphaGo가 꺾은 건 테니스 챔피언이 아니라 바둑 기사예요! 2016년 이세돌 9단과의 대국에서 4:1로 이겼죠. AI는 비슷해 보이는 종목을 혼동하는 오류를 범했어요. 이 대본을 그대로 발표했으면 망신당할 뻔했네요 😱" },
+      "3": { real:true, text:"✅ 맞아요! ChatGPT는 2022년 11월 30일 출시 후, 2개월 만에 사용자 1억 명을 돌파했어요." },
+      "4": { real:true, text:"✅ 맞아요! 2017년 Google 연구팀의 트랜스포머 논문 'Attention is All You Need'는 현재 AI의 핵심 기술로, ChatGPT도 이 기술을 기반으로 해요." }
     }
   },
   {
-    title: "AI가 생성한 '한국의 디지털 혁신' 보고서",
-    text: `한국은 세계 최고 수준의 인터넷 인프라를 갖춘 국가입니다. <span class="highlight" data-id="1">한국의 초고속 인터넷 보급률은 세계 1위 수준으로, 가구 보급률이 99%를 넘습니다.</span> 삼성전자는 <span class="highlight" data-id="2">전 세계 스마트폰 시장에서 애플과 함께 1~2위를 다투고 있습니다.</span> 한국 정부는 <span class="highlight" data-id="3">2023년 "AI 기본법"을 세계 최초로 제정하여 AI 거버넌스의 선진국이 되었습니다.</span> 카카오와 네이버는 <span class="highlight" data-id="4">한국 인터넷 플랫폼 시장의 양대 산맥으로, 각각 메신저와 검색 분야를 주도하고 있습니다.</span>`,
+    title: "📰 AI가 요약한 최신 AI 규제 뉴스",
+    subtitle: "AI 뉴스 자동 요약 앱이 작성한 뉴스 브리핑이에요. 뉴스 속 AI 오류를 찾아보세요!",
+    text: `【이번 주 AI 세계 뉴스 요약 ⚡】
+
+🌍 세계 최초 AI 규제법 등장!
+<span class="highlight" data-id="1">유럽연합(EU)은 2024년 세계 최초의 포괄적 AI 규제법 'EU AI Act'를 통과시켰어요.</span> AI를 위험도에 따라 4단계로 분류해 규제하는 방식이에요.
+
+🇰🇷 한국도 뒤따랐어요!
+<span class="highlight" data-id="2">우리나라도 'AI 기본법'이 2024년 국회를 통과하며 AI 거버넌스 체계를 마련했어요.</span>
+
+📊 AI 시장은 얼마나 커졌을까?
+<span class="highlight" data-id="3">현재 전 세계 AI 시장 규모는 약 5,200조 원으로, 대한민국 연간 GDP(약 2,200조 원)의 2배가 넘는 수준이에요!</span>
+
+🤖 AI가 뉴스도 써요!
+<span class="highlight" data-id="4">AI 뉴스 작성 시스템은 이미 AP통신, 로이터 등 대형 언론사에서 활용하고 있어요.</span>`,
     fakes: ["3"],
     explanations: {
-      "1": { real:true, text:"맞습니다. 한국은 OECD 국가 중 초고속 인터넷 보급률 최상위권에 속합니다." },
-      "2": { real:true, text:"맞습니다. 삼성전자는 글로벌 스마트폰 시장에서 애플과 1~2위를 다투고 있습니다." },
-      "3": { real:false, text:"❌ 할루시네이션! 한국의 AI 기본법은 2024년에 통과되었지, '2023년 세계 최초'가 아닙니다. EU AI Act도 비슷한 시기에 진행되었습니다. AI는 '세계 최초'와 같은 과장된 표현을 자주 사용합니다." },
-      "4": { real:true, text:"맞습니다. 카카오(카카오톡)와 네이버는 한국 인터넷 시장의 양대 플랫폼입니다." }
+      "1": { real:true, text:"✅ 맞아요! EU AI Act는 2024년에 최종 통과되었어요. 위험도에 따라 AI를 4단계로 분류해 규제해요." },
+      "2": { real:true, text:"✅ 맞아요! 한국의 AI 기본법도 2024년 12월 국회를 통과했어요. 첨단 AI 시스템의 안전 기준 마련을 목표로 해요." },
+      "3": { real:false, text:"❌ 할루시네이션 발견! '5,200조 원'이라는 수치가 사실처럼 보이지만, AI가 임의로 만든 그럴듯한 숫자예요! 실제 AI 시장 규모는 조사 기관마다 크게 다르고, 이렇게 구체적인 수치는 반드시 출처를 확인해야 해요. AI는 숫자를 꾸며내는 걸 특히 잘한답니다!" },
+      "4": { real:true, text:"✅ 맞아요! AP통신은 이미 2014년부터 AI를 활용해 기업 실적 기사를 자동 작성하고 있어요." }
     }
   },
   {
-    title: "AI가 생성한 '딥러닝과 인공신경망' 개요",
-    text: `딥러닝은 인간의 뇌 신경망 구조에서 영감을 받은 머신러닝의 한 분야입니다. <span class="highlight" data-id="1">딥러닝의 핵심 알고리즘인 역전파(Backpropagation)는 1986년 루멜하트(Rumelhart) 등이 발표한 논문에서 대중화되었습니다.</span> 이미지 인식 분야의 혁신을 이끈 <span class="highlight" data-id="2">AlexNet은 2012년 ImageNet 대회에서 오류율을 획기적으로 낮추며 딥러닝 붐을 촉발했습니다.</span> 현재 가장 널리 사용되는 대형 언어 모델(LLM)의 기반인 트랜스포머(Transformer) 구조는 <span class="highlight" data-id="3">2019년 Meta AI 연구팀이 "Transformers are All You Need"라는 논문으로 처음 발표했습니다.</span> 딥러닝은 <span class="highlight" data-id="4">의료 영상 진단, 자율주행, 자연어 처리 등 다양한 분야에 활용되고 있습니다.</span>`,
+    title: "🧑‍🏫 AI 과외 선생님의 'AI 편향' 개념 정리",
+    subtitle: "AI 윤리 과제를 위해 AI 튜터에게 개념 정리를 요청했어요. AI 튜터의 설명에도 오류가 숨어있을 수 있어요!",
+    text: `🎓 오늘의 주제: AI 편향(Algorithmic Bias) 완벽 정리
+
+<span class="highlight" data-id="1">알고리즘 편향이란 AI가 특정 집단에게 불공평한 결과를 내놓는 현상이에요.</span> 주로 편향된 학습 데이터에서 비롯돼요.
+
+📌 실제 사례 ①: 아마존의 AI 채용 실패
+<span class="highlight" data-id="2">아마존은 2018년 여성 지원자를 차별하는 AI 채용 시스템이 발견되어 해당 시스템을 폐기했어요.</span> 과거의 편향된 채용 데이터를 그대로 학습했기 때문이에요.
+
+📌 실제 사례 ②: 미국 형사 AI COMPAS
+<span class="highlight" data-id="3">2016년 미국에서 사용된 형사 재판 AI 'COMPAS'는 흑인과 백인 피의자에게 동등하게 공정한 점수를 부여한다고 검증되었어요.</span>
+
+💡 해결책은?
+<span class="highlight" data-id="4">AI가 왜 그런 판단을 내렸는지 설명할 수 있게 하는 'AI 설명 가능성(Explainability)'을 높이는 것이 중요해요.</span>`,
     fakes: ["3"],
     explanations: {
-      "1": { real:true, text:"맞습니다. 역전파 알고리즘은 1986년 Rumelhart, Hinton, Williams의 논문 'Learning representations by back-propagating errors'에서 대중화되었습니다." },
-      "2": { real:true, text:"맞습니다. AlexNet은 2012년 ILSVRC(ImageNet) 대회에서 Top-5 오류율 15.3%를 기록하며 딥러닝 시대를 열었습니다." },
-      "3": { real:false, text:"❌ 할루시네이션! 트랜스포머는 2017년 Google Brain 팀이 'Attention is All You Need' 논문으로 발표했습니다. Meta AI가 아니고, 제목도 다르며, 연도도 2019년이 아닌 2017년입니다. AI는 여러 사실을 뒤섞어 그럴듯한 거짓을 만들어냅니다." },
-      "4": { real:true, text:"맞습니다. 딥러닝은 의료 영상, 자율주행, NLP 등 다양한 분야에서 활발히 사용되고 있습니다." }
+      "1": { real:true, text:"✅ 맞아요! 알고리즘 편향은 AI 윤리의 핵심 주제예요. 사람의 편견이 담긴 데이터로 학습하면 AI도 편향된 판단을 내리게 돼요." },
+      "2": { real:true, text:"✅ 맞아요! 아마존의 AI 채용 시스템은 과거 10년간의 채용 이력(주로 남성 중심)을 학습하여, 여성 관련 단어가 포함된 이력서에 낮은 점수를 줬어요. 2018년 로이터 보도로 알려지고 폐기되었어요." },
+      "3": { real:false, text:"❌ 할루시네이션 발견! COMPAS는 공정했던 게 아니에요! 오히려 흑인 피의자에게 실제보다 높은 재범 위험 점수를 부여하는 편향이 발견된 사례로 유명해요. ProPublica의 조사에서 이 편향이 밝혀졌고, AI 윤리에서 가장 중요한 사례 중 하나예요!" },
+      "4": { real:true, text:"✅ 맞아요! AI 설명 가능성(XAI: Explainable AI)은 AI의 편향 문제 해결을 위한 핵심 기술로, AI가 판단의 근거를 사람이 이해할 수 있게 설명하는 거예요." }
     }
   }
 ];
@@ -738,8 +783,9 @@ function renderM2() {
 
   document.getElementById('m2-content').innerHTML = `
     <div class="scenario-card">
-      <div class="q-num">텍스트 ${m2Current+1} / 4 — 할루시네이션 탐지</div>
-      <h3>📄 ${d.title}</h3>
+      <div class="q-num">🕵️ 사건 파일 ${m2Current+1} / 4 — 할루시네이션 탐지</div>
+      <h3>${d.title}</h3>
+      <p style="margin-top:4px; color:var(--text2); font-size:0.85rem; font-style:italic;">${d.subtitle}</p>
       <p style="margin-top:8px; color:var(--accent); font-size:0.85rem;">💡 노란 밑줄 부분 중 가짜 정보를 클릭하세요! 가짜 항목 수: ${d.fakes.length}개</p>
       <div class="clue-counter">
         <span style="font-size:0.85rem; color:var(--text2);">발견:</span>
