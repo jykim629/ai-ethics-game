@@ -70,7 +70,10 @@
   .hero h1 { font-size:3rem; font-weight:900; background:linear-gradient(135deg,#7c3aed,#ec4899,#f43f5e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:16px 0 8px; letter-spacing:-0.5px; }
   .hero p { color:var(--text2); font-size:1.05rem; line-height:1.7; }
 
-  .module-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; max-width:900px; width:100%; margin-top:32px; }
+  .module-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:20px; max-width:900px; width:100%; margin-top:32px; }
+  .module-card { grid-column:span 2; }
+  #card-4 { grid-column:2 / span 2; }
+  #card-5 { grid-column:4 / span 2; }
   .module-card {
     background:var(--card); border:2px solid var(--border); border-radius:24px; padding:28px 24px;
     cursor:pointer; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); position:relative; overflow:hidden;
@@ -214,6 +217,7 @@
   @media(max-width:600px) {
     .hero h1 { font-size:2.1rem; }
     .module-grid { grid-template-columns:1fr; }
+    .module-card, #card-4, #card-5 { grid-column:span 1!important; }
     .intro-box { padding:28px 20px; }
     .scenario-card { padding:20px; }
     .court-scene { flex-direction:column; }
@@ -312,7 +316,7 @@
       <circle cx="128" cy="146" r="7" fill="#4a44cc" stroke="#8b85ff" stroke-width="1"/>
     </svg>
     <h1>AI 윤리 탐험대</h1>
-    <p>AI가 가져오는 윤리적 딜레마를 직접 체험해보세요!<br>자율주행차부터 저작권까지 — 당신의 선택이 미래를 만듭니다.</p>
+    <p>자율주행·저작권·편향·대학생활 — AI 윤리 딜레마를 직접 선택해보세요!</p>
     <div style="margin-top:16px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
       <span class="chip chip-blue">🎮 5개 미션</span>
       <span class="chip chip-green">⭐ 100점 만점</span>
@@ -880,6 +884,7 @@ function nextM2() {
     showMissionComplete(2, state.scores[1], 20, 'm2-content');
   } else { renderM2(); window.scrollTo(0,0); }
 }
+
 
 // ===== MODULE 3: BIAS =====
 const m3Data = [
