@@ -314,8 +314,8 @@
     <h1>AI 윤리 탐험대</h1>
     <p>AI가 가져오는 윤리적 딜레마를 직접 체험해보세요!<br>자율주행차부터 저작권까지 — 당신의 선택이 미래를 만듭니다.</p>
     <div style="margin-top:16px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-      <span class="chip chip-blue">🎮 6개 미션</span>
-      <span class="chip chip-green">⭐ 120점 만점</span>
+      <span class="chip chip-blue">🎮 5개 미션</span>
+      <span class="chip chip-green">⭐ 100점 만점</span>
       <span class="chip chip-orange">⏱ 약 20분</span>
     </div>
   </div>
@@ -350,18 +350,11 @@
       <div class="card-score" id="card-score-4" style="display:none; margin-top:10px;"></div>
     </div>
     <div class="module-card" onclick="startModule(5)" id="card-5">
-      <span class="icon">🧠</span>
-      <span class="badge" id="badge-5">Mission 5</span>
-      <h3>AI 윤리 재판관</h3>
-      <p>의료·감시·추천 알고리즘 AI 시스템의 판단, 당신은 어떻게 평가하시겠습니까?</p>
-      <div class="card-score" id="card-score-5" style="display:none; margin-top:10px;"></div>
-    </div>
-    <div class="module-card" onclick="startModule(6)" id="card-6">
       <span class="icon">🎓</span>
-      <span class="badge" id="badge-6">Mission 6</span>
+      <span class="badge" id="badge-5">Mission 5</span>
       <h3>대학생 AI 활용 가이드</h3>
       <p>과제·시험·발표·취업 준비에서 AI를 현명하게 쓰는 방법을 알아보세요!</p>
-      <div class="card-score" id="card-score-6" style="display:none; margin-top:10px;"></div>
+      <div class="card-score" id="card-score-5" style="display:none; margin-top:10px;"></div>
     </div>
   </div>
 
@@ -494,40 +487,11 @@
   <div class="scenario-wrap" id="m4-content"></div>
 </div>
 
-<!-- ==================== MODULE 5: ETHICS JUDGE ==================== -->
+<!-- ==================== MODULE 5: UNIVERSITY AI USE ==================== -->
 <div id="screen-m5-intro" class="screen">
   <div class="intro-box">
-    <span class="big-icon">🧠🔮</span>
-    <h2>Mission 5: AI 윤리 재판관</h2>
-    <p>의료 진단, 범죄 예측, 대출 심사… AI가 인생을 결정하는 시대!<br>당신은 이 AI 시스템에 동의하시겠습니까?</p>
-    <div class="rules">
-      <ul>
-        <li>AI가 내린 결정을 보고 윤리적으로 평가하세요</li>
-        <li>각 결정의 문제점을 짚어내고 개선 방향을 제시하세요</li>
-        <li>총 4개 시나리오, 각 5점 = 최대 20점</li>
-      </ul>
-    </div>
-    <div class="btn-group">
-      <button class="btn btn-secondary" onclick="showScreen('screen-home')">← 돌아가기</button>
-      <button class="btn btn-primary" onclick="showScreen('screen-m5'); initM5()">판결 시작! →</button>
-    </div>
-  </div>
-</div>
-
-<div id="screen-m5" class="screen">
-  <div class="game-header" style="max-width:800px;">
-    <span class="score-display">🏆 <span id="m5-score">0</span>점</span>
-    <div class="progress-bar"><div class="progress-fill" id="m5-progress" style="width:0%"></div></div>
-    <span class="module-label">🧠 미션 5 | <span id="m5-q-num">1</span>/4</span>
-  </div>
-  <div class="scenario-wrap" id="m5-content"></div>
-</div>
-
-<!-- ==================== MODULE 6: UNIVERSITY AI USE ==================== -->
-<div id="screen-m6-intro" class="screen">
-  <div class="intro-box">
     <span class="big-icon">🎓📚</span>
-    <h2>Mission 6: 대학생 AI 활용 가이드</h2>
+    <h2>Mission 5: 대학생 AI 활용 가이드</h2>
     <p>과제, 시험, 발표, 취업 준비...<br>대학생이라면 꼭 알아야 할 AI 현명하게 쓰는 법!</p>
     <div class="rules">
       <ul>
@@ -538,19 +502,20 @@
     </div>
     <div class="btn-group">
       <button class="btn btn-secondary" onclick="showScreen('screen-home')">← 돌아가기</button>
-      <button class="btn btn-primary" onclick="showScreen('screen-m6'); initM6()">시작! →</button>
+      <button class="btn btn-primary" onclick="showScreen('screen-m5'); initM5()">시작! →</button>
     </div>
   </div>
 </div>
 
-<div id="screen-m6" class="screen">
+<div id="screen-m5" class="screen">
   <div class="game-header" style="max-width:800px;">
-    <span class="score-display">🏆 <span id="m6-score">0</span>점</span>
-    <div class="progress-bar"><div class="progress-fill" id="m6-progress" style="width:0%"></div></div>
-    <span class="module-label">🎓 미션 6 | <span id="m6-q-num">1</span>/4</span>
+    <span class="score-display">🏆 <span id="m5-score">0</span>점</span>
+    <div class="progress-bar"><div class="progress-fill" id="m5-progress" style="width:0%"></div></div>
+    <span class="module-label">🎓 미션 5 | <span id="m5-q-num">1</span>/4</span>
   </div>
-  <div class="scenario-wrap" id="m6-content"></div>
+  <div class="scenario-wrap" id="m5-content"></div>
 </div>
+
 
 <!-- ==================== FINAL RESULT ==================== -->
 <div id="screen-result" class="screen">
@@ -579,8 +544,8 @@
 <script>
 // ===== STATE =====
 const state = {
-  scores: [0,0,0,0,0,0],
-  completed: [false,false,false,false,false,false]
+  scores: [0,0,0,0,0],
+  completed: [false,false,false,false,false]
 };
 
 // ===== NAVIGATION =====
@@ -1174,133 +1139,8 @@ function nextM4() {
   } else { renderM4(); window.scrollTo(0,0); }
 }
 
-// ===== MODULE 5: ETHICS JUDGE =====
+// ===== MODULE 5: UNIVERSITY AI USE =====
 const m5Data = [
-  {
-    title: "AI 의사를 믿어야 할까?",
-    scenario: "대학 병원이 AI 진단 보조 시스템을 도입했어요. AI 정확도 94%, 의사 평균 87%예요.",
-    situation: "당신이 AI 진단을 받았는데 '암 90% 확률'이라고 나왔어요. 담당 의사는 증상을 보고 '암 아닐 것 같다'고 했어요. 어떻게 하실 건가요?",
-    q: "이 상황에서 가장 좋은 선택은?",
-    choices: [
-      { text: "AI가 더 정확하니까 AI 말을 믿는다", key: "A" },
-      { text: "의사를 믿는다 — AI는 참고만 한다", key: "B" },
-      { text: "다른 병원에서 추가 검사를 받는다", key: "C" },
-      { text: "AI와 의사 의견을 모두 고려해 추가 검사 등 직접 결정한다", key: "D" }
-    ],
-    correct: "D",
-    feedback: "WHO의 AI 의료 윤리 가이드라인은 '인간의 자율성 보호'가 최우선이에요. AI 94%도 100%가 아니에요. 당신 몸에 대한 최종 결정은 당신이 해야 해요! AI는 훌륭한 도구지만, 의사의 최종 판단과 환자의 알 권리가 모두 중요해요."
-  },
-  {
-    title: "AI 챗봇 심리 상담, 믿을 수 있을까?",
-    scenario: "학교에 24시간 AI 심리 상담 챗봇이 생겼어요. 새벽에도 항상 대화할 수 있어서 많은 학생이 이용해요.",
-    situation: "친구가 새벽 3시에 AI 챗봇에게 '너무 힘들어서 사라지고 싶다'고 했어요. 챗봇은 위로의 말을 건네고 대화를 이어갔어요. 이 대응이 충분할까요?",
-    q: "AI 챗봇의 올바른 대응은?",
-    choices: [
-      { text: "공감 메시지를 보내고 대화를 계속하면 충분하다", key: "A" },
-      { text: "자살예방 핫라인(1393)을 안내한다", key: "B" },
-      { text: "담당 상담사에게 즉시 긴급 알림을 보낸다", key: "C" },
-      { text: "B와 C 모두 — 즉각적 위기 자원 제공 + 인간 개입", key: "D" }
-    ],
-    correct: "D",
-    feedback: "AI가 위기 상황을 오해하면 큰일이에요! 미국심리학회(APA)는 AI 상담 도구가 위기 감지 시 반드시 인간 전문가에게 연결해야 한다고 명시해요. 새벽 3시라도 1393(자살예방상담전화)은 24시간 운영돼요. AI를 보조로 쓰되, 위기 상황엔 반드시 사람이 개입해야 해요!"
-  },
-  {
-    title: "AI 추천 알고리즘의 에코챔버",
-    scenario: "유튜브, 인스타그램의 AI는 사용자가 더 오래 머물도록 콘텐츠를 추천해요.",
-    situation: "처음엔 가벼운 정치 뉴스를 검색했는데, 6개월 후 AI가 계속 한쪽 주장의 영상만 추천해요. 반대 의견을 거의 접하지 못하게 됐어요. 이런 현상을 뭐라고 할까요?",
-    q: "이 현상의 문제점과 해결책으로 가장 맞는 것은?",
-    choices: [
-      { text: "문제없다 — 내가 좋아하는 걸 보여주는 거다", key: "A" },
-      { text: "'에코챔버(echo chamber)' — AI가 편향된 정보만 보여준다", key: "B" },
-      { text: "사용자가 직접 다양한 콘텐츠를 찾아보면 된다", key: "C" },
-      { text: "B가 문제이고, 플랫폼이 알고리즘을 개선해야 한다", key: "D" }
-    ],
-    correct: "D",
-    feedback: "에코챔버(Echo Chamber)는 AI 알고리즘이 비슷한 의견만 반복적으로 보여주는 현상이에요. 한쪽 주장만 계속 보면 세상이 그런 줄 알게 돼요. EU 디지털 서비스법(DSA)은 대형 플랫폼이 추천 알고리즘의 위험성을 공개하도록 의무화했어요. 의도적으로 반대 의견도 찾아보는 습관이 중요해요!"
-  },
-  {
-    title: "AI 얼굴인식, 괜찮을까?",
-    scenario: "대형 쇼핑몰이 AI 얼굴인식으로 과거 절도범을 자동 탐지하는 시스템을 도입했어요.",
-    situation: "AI가 한 여성을 과거 절도범으로 인식해 경보가 울렸어요. 하지만 그녀는 완전히 다른 사람이었어요! AI 오인식이었던 거예요. 이런 AI 시스템에 대해 어떻게 생각하나요?",
-    q: "공공장소 AI 얼굴인식 시스템 도입에 가장 중요한 조건은?",
-    choices: [
-      { text: "정확도를 99% 이상으로 높이면 된다", key: "A" },
-      { text: "특정 집단(여성, 흑인 등)에 대한 오류율 편차를 먼저 없애야 한다", key: "B" },
-      { text: "민주적 토론과 법적 규제 없이는 도입하면 안 된다", key: "C" },
-      { text: "A, B, C 모두 충족해야 한다", key: "D" }
-    ],
-    correct: "D",
-    feedback: "NIST 연구에 따르면 AI 얼굴인식은 흑인 여성에게 10~100배 더 높은 오류율을 보여요. IBM, Microsoft, Amazon은 2020년 경찰의 AI 얼굴인식 판매를 중단했어요! EU AI법은 공공 얼굴인식을 '고위험 AI'로 분류해 엄격히 규제해요. 무고한 시민이 범인으로 오인되는 사회, 괜찮을까요?"
-  }
-];
-
-let m5Current = 0;
-let m5Answered = false;
-
-function initM5() {
-  m5Current = 0; m5Answered = false;
-  state.scores[4] = 0;
-  renderM5();
-}
-
-function renderM5() {
-  const d = m5Data[m5Current];
-  document.getElementById('m5-q-num').textContent = m5Current+1;
-  document.getElementById('m5-progress').style.width = ((m5Current/4)*100)+'%';
-  document.getElementById('m5-score').textContent = state.scores[4];
-  m5Answered = false;
-
-  const choicesHTML = d.choices.map(c => `
-    <button class="choice-btn" onclick="answerM5('${c.key}')" id="m5-choice-${c.key}">
-      <span class="choice-letter">${c.key}</span><span>${c.text}</span>
-    </button>`).join('');
-
-  document.getElementById('m5-content').innerHTML = `
-    <div class="scenario-card">
-      <div class="q-num">CASE ${m5Current+1} / 4 — AI 윤리 판결 🧠</div>
-      <h3 style="margin-bottom:12px;">🔮 ${d.title}</h3>
-      <div style="background:rgba(108,99,255,0.08);border-radius:12px;padding:16px;margin-bottom:12px;border-left:3px solid var(--accent);">
-        <p style="font-size:0.85rem; color:var(--text2); line-height:1.7;"><strong style="color:var(--text);">배경:</strong> ${d.scenario}</p>
-      </div>
-      <div style="background:rgba(255,101,132,0.08);border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid var(--accent2);">
-        <p style="font-size:0.9rem; line-height:1.7;"><strong>상황:</strong> ${d.situation}</p>
-      </div>
-      <h3>${d.q}</h3>
-    </div>
-    <div class="choices">${choicesHTML}</div>
-    <div class="feedback-box" id="m5-feedback"></div>
-    <div class="btn-group" id="m5-next-btn" style="display:none;">
-      <button class="btn btn-primary" onclick="nextM5()">${m5Current<3?'다음 케이스 →':'최종 결과 보기 🏆'}</button>
-    </div>`;
-}
-
-function answerM5(key) {
-  if (m5Answered) return;
-  m5Answered = true;
-  const d = m5Data[m5Current];
-  const isCorrect = key === d.correct;
-  if (isCorrect) state.scores[4] += 5;
-  document.getElementById('m5-score').textContent = state.scores[4];
-  document.querySelectorAll('.choice-btn').forEach(b => b.classList.add('disabled'));
-  document.getElementById('m5-choice-'+key).classList.add(isCorrect ? 'correct' : 'wrong');
-  if (!isCorrect) document.getElementById('m5-choice-'+d.correct).classList.add('correct');
-  const fbEl = document.getElementById('m5-feedback');
-  fbEl.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'info-fb');
-  fbEl.innerHTML = `<h4>${isCorrect?'✅ 훌륭한 판결!':'ℹ️ 윤리 전문가의 견해'}</h4><p>${d.feedback}</p>`;
-  document.getElementById('m5-next-btn').style.display = 'flex';
-}
-
-function nextM5() {
-  m5Current++;
-  if (m5Current >= 4) {
-    state.completed[4] = true;
-    updateHomeCards();
-    showMissionComplete(5, state.scores[4], 20, 'm5-content');
-  } else { renderM5(); window.scrollTo(0,0); }
-}
-
-// ===== MODULE 6: UNIVERSITY AI USE =====
-const m6Data = [
   {
     title: "AI로 쓴 레포트, 어떻게 할까?",
     scenario: "기말 레포트 마감이 내일인데 ChatGPT로 초안을 작성했어요. 교수님은 AI 사용에 대해 아무 말씀이 없었어요.",
@@ -1359,30 +1199,30 @@ const m6Data = [
   }
 ];
 
-let m6Current = 0;
-let m6Answered = false;
+let m5Current = 0;
+let m5Answered = false;
 
-function initM6() {
-  m6Current = 0; m6Answered = false;
-  state.scores[5] = 0;
-  renderM6();
+function initM5() {
+  m5Current = 0; m5Answered = false;
+  state.scores[4] = 0;
+  renderM5();
 }
 
-function renderM6() {
-  const d = m6Data[m6Current];
-  document.getElementById('m6-q-num').textContent = m6Current+1;
-  document.getElementById('m6-progress').style.width = ((m6Current/4)*100)+'%';
-  document.getElementById('m6-score').textContent = state.scores[5];
-  m6Answered = false;
+function renderM5() {
+  const d = m5Data[m5Current];
+  document.getElementById('m5-q-num').textContent = m5Current+1;
+  document.getElementById('m5-progress').style.width = ((m5Current/4)*100)+'%';
+  document.getElementById('m5-score').textContent = state.scores[4];
+  m5Answered = false;
 
   const choicesHTML = d.choices.map(c => `
-    <button class="choice-btn" onclick="answerM6('${c.key}')" id="m6-choice-${c.key}">
+    <button class="choice-btn" onclick="answerM5('${c.key}')" id="m5-choice-${c.key}">
       <span class="choice-letter">${c.key}</span><span>${c.text}</span>
     </button>`).join('');
 
-  document.getElementById('m6-content').innerHTML = `
+  document.getElementById('m5-content').innerHTML = `
     <div class="scenario-card">
-      <div class="q-num">CASE ${m6Current+1} / 4 — 대학생 AI 활용 🎓</div>
+      <div class="q-num">CASE ${m5Current+1} / 4 — 대학생 AI 활용 🎓</div>
       <h3 style="margin-bottom:12px;">📚 ${d.title}</h3>
       <div style="background:rgba(108,99,255,0.08);border-radius:12px;padding:16px;margin-bottom:12px;border-left:3px solid var(--accent);">
         <p style="font-size:0.85rem; color:var(--text2); line-height:1.7;"><strong style="color:var(--text);">상황:</strong> ${d.scenario}</p>
@@ -1393,40 +1233,41 @@ function renderM6() {
       <h3>${d.q}</h3>
     </div>
     <div class="choices">${choicesHTML}</div>
-    <div class="feedback-box" id="m6-feedback"></div>
-    <div class="btn-group" id="m6-next-btn" style="display:none;">
-      <button class="btn btn-primary" onclick="nextM6()">${m6Current<3?'다음 케이스 →':'최종 결과 보기 🏆'}</button>
+    <div class="feedback-box" id="m5-feedback"></div>
+    <div class="btn-group" id="m5-next-btn" style="display:none;">
+      <button class="btn btn-primary" onclick="nextM5()">${m5Current<3?'다음 케이스 →':'최종 결과 보기 🏆'}</button>
     </div>`;
 }
 
-function answerM6(key) {
-  if (m6Answered) return;
-  m6Answered = true;
-  const d = m6Data[m6Current];
+function answerM5(key) {
+  if (m5Answered) return;
+  m5Answered = true;
+  const d = m5Data[m5Current];
   const isCorrect = key === d.correct;
-  if (isCorrect) state.scores[5] += 5;
-  document.getElementById('m6-score').textContent = state.scores[5];
+  if (isCorrect) state.scores[4] += 5;
+  document.getElementById('m5-score').textContent = state.scores[4];
   document.querySelectorAll('.choice-btn').forEach(b => b.classList.add('disabled'));
-  document.getElementById('m6-choice-'+key).classList.add(isCorrect ? 'correct' : 'wrong');
-  if (!isCorrect) document.getElementById('m6-choice-'+d.correct).classList.add('correct');
-  const fbEl = document.getElementById('m6-feedback');
+  document.getElementById('m5-choice-'+key).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) document.getElementById('m5-choice-'+d.correct).classList.add('correct');
+  const fbEl = document.getElementById('m5-feedback');
   fbEl.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'info-fb');
   fbEl.innerHTML = `<h4>${isCorrect?'✅ 훌륭해요!':'ℹ️ 이렇게 생각해보세요'}</h4><p>${d.feedback}</p>`;
-  document.getElementById('m6-next-btn').style.display = 'flex';
+  document.getElementById('m5-next-btn').style.display = 'flex';
 }
 
-function nextM6() {
-  m6Current++;
-  if (m6Current >= 4) {
-    state.completed[5] = true; updateHomeCards();
-    showMissionComplete(6, state.scores[5], 20, 'm6-content');
-  } else { renderM6(); window.scrollTo(0,0); }
+function nextM5() {
+  m5Current++;
+  if (m5Current >= 4) {
+    state.completed[4] = true;
+    updateHomeCards();
+    showMissionComplete(5, state.scores[4], 20, 'm5-content');
+  } else { renderM5(); window.scrollTo(0,0); }
 }
 
 // ===== MISSION COMPLETE =====
 function showMissionComplete(mNum, score, maxScore, contentId) {
-  const names = ['','🚗 자율주행차 딜레마','🔍 AI 할루시네이션','⚖️ AI 편향 감지기','©️ AI 저작권 재판','🧠 AI 윤리 재판관','🎓 대학생 AI 활용'];
-  const nextNums = [null, 2, 3, 4, 5, 6, null];
+  const names = ['','🚗 자율주행차 딜레마','🔍 AI 할루시네이션','⚖️ AI 편향 감지기','©️ AI 저작권 재판','🎓 대학생 AI 활용'];
+  const nextNums = [null, 2, 3, 4, 5, null];
   const pct = Math.round((score/maxScore)*100);
   const stars = pct>=80?'⭐⭐⭐':pct>=60?'⭐⭐':pct>=40?'⭐':'';
   const trophy = pct>=80?'🏆':pct>=60?'🥇':'🎖️';
@@ -1466,8 +1307,8 @@ function showResult() {
   else if (pct >= 50) { grade='B 등급'; gradeClass='grade-b'; trophy='🎖️'; title='좋은 시도!'; subtitle=`${doneCount}개 미션 완료 — 더 많은 미션에 도전해보세요!`; }
   else { grade='C 등급'; gradeClass='grade-c'; trophy='🌱'; title='AI 윤리 첫걸음!'; subtitle=`${doneCount}개 미션 완료 — AI 윤리는 복잡한 주제입니다. 계속 도전하세요!`; }
 
-  const mNames = ['🚗 자율주행차 딜레마','🔍 AI 할루시네이션','⚖️ AI 편향 감지','©️ AI 저작권','🧠 AI 윤리 판결','🎓 대학생 AI 활용'];
-  const mMax = [20, 20, 20, 20, 20, 20];
+  const mNames = ['🚗 자율주행차 딜레마','🔍 AI 할루시네이션','⚖️ AI 편향 감지','©️ AI 저작권','🎓 대학생 AI 활용'];
+  const mMax = [20, 20, 20, 20, 20];
   let best = 0, bestName = '-';
   state.scores.forEach((s,i) => { if(state.completed[i] && s >= best) { best=s; bestName=mNames[i].split(' ')[1]; } });
 
@@ -1503,7 +1344,7 @@ function showResult() {
 }
 
 function updateHomeCards() {
-  const pcts = [100, 100, 100, 100, 100, 100];
+  const pcts = [100, 100, 100, 100, 100];
   state.completed.forEach((done, i) => {
     const badge = document.getElementById('badge-'+(i+1));
     const scoreEl = document.getElementById('card-score-'+(i+1));
@@ -1520,9 +1361,9 @@ function updateHomeCards() {
 }
 
 function restartGame() {
-  state.scores = [0,0,0,0,0,0];
-  state.completed = [false,false,false,false,false,false];
-  for (let i=1; i<=6; i++) {
+  state.scores = [0,0,0,0,0];
+  state.completed = [false,false,false,false,false];
+  for (let i=1; i<=5; i++) {
     const badge = document.getElementById('badge-'+i);
     const scoreEl = document.getElementById('card-score-'+i);
     if (badge) { badge.textContent = 'Mission '+i; badge.style.background = ''; badge.style.color = ''; }
