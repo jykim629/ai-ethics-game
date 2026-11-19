@@ -242,9 +242,20 @@
   .chip-green { background:rgba(5,150,105,0.1); border:1.5px solid rgba(5,150,105,0.3); color:#059669; }
   .chip-red { background:rgba(244,63,94,0.1); border:1.5px solid rgba(244,63,94,0.3); color:#f43f5e; }
   .chip-orange { background:rgba(217,119,6,0.1); border:1.5px solid rgba(217,119,6,0.3); color:#d97706; }
+
+  /* ===== BGM ===== */
+  .bgm-toggle { position:fixed; top:12px; right:12px; z-index:1000; width:44px; height:44px; border-radius:50%; border:2px solid var(--border); background:var(--card); color:var(--text); font-size:1.2rem; cursor:pointer; box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center; padding:0; }
+  .bgm-toggle:active { transform:scale(0.92); }
+  .bgm-toggle.playing { animation: bgmPulse 2.4s ease-in-out infinite; }
+  @keyframes bgmPulse { 0%,100%{ box-shadow:var(--shadow); } 50%{ box-shadow:0 0 0 6px rgba(108,99,255,0.25); } }
+  @media (max-width:480px) { .bgm-toggle { top:8px; right:8px; width:40px; height:40px; } }
 </style>
 </head>
 <body>
+
+<!-- ==================== BGM ==================== -->
+<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+<button class="bgm-toggle" id="bgm-toggle" type="button" aria-label="배경음악 켜기/끄기" title="배경음악 켜기/끄기">🔇</button>
 
 <!-- ==================== HOME SCREEN ==================== -->
 <div id="screen-home" class="screen active">
@@ -1393,6 +1404,68 @@ function launchConfetti() {
   }
   setTimeout(() => wrap.innerHTML = '', 5000);
 }
+</script>
+<script>
+// ===== BGM =====
+(function () {
+  const audio = document.getElementById('bgm');
+  const btn = document.getElementById('bgm-toggle');
+  audio.volume = 0.35;
+
+  function readPref() {
+    try { return localStorage.getItem('bgmMuted') === '1'; } catch (e) { return false; }
+  }
+  function savePref(muted) {
+    try { localStorage.setItem('bgmMuted', muted ? '1' : '0'); } catch (e) {}
+  }
+
+  let muted = readPref();
+
+  function render() {
+    const playing = !audio.paused;
+    btn.textContent = muted ? '🔇' : '🎵';
+    btn.classList.toggle('playing', playing && !muted);
+    btn.setAttribute('aria-pressed', String(!muted));
+  }
+
+  function tryPlay() {
+    if (muted) return;
+    const p = audio.play();
+    if (p && typeof p.then === 'function') {
+      p.then(render).catch(() => render()); // 자동재생 차단 시 다음 사용자 입력에서 재시도
+    } else {
+      render();
+    }
+  }
+
+  // 브라우저 자동재생 정책: 첫 사용자 입력 이후에 재생 시작
+  function onFirstGesture() {
+    tryPlay();
+    if (!audio.paused) {
+      ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.removeEventListener(ev, onFirstGesture, true));
+      // 재생 성공 후 리스너 제거 (capture 플래그 일치 필요)
+    }
+  }
+  ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, onFirstGesture, true));
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (audio.paused || muted) {
+      muted = false;
+      savePref(false);
+      tryPlay();
+    } else {
+      audio.pause();
+      muted = true;
+      savePref(true);
+    }
+    render();
+  });
+
+  audio.addEventListener('play', render);
+  audio.addEventListener('pause', render);
+  render();
+})();
 </script>
 </body>
 </html>
